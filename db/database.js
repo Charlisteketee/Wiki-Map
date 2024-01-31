@@ -1,12 +1,28 @@
 // lets do all database queries here.
 const db = require('../connection');
-//get html (ALL MAPS, DESCENDING ORDER BY FAVOURITES) - Charli
 //get user id function LOW PRIORITY. CREATOR ID
 // insert point function -Paul
 // query filter by location for search bar. - Charli
 // delete map function -Luiza
 // delete point function - Luiza
 // edit point UPDATE tablename SET column_name = new value WHERE some condition
+
+//get html (ALL MAPS, DESCENDING ORDER BY FAVOURITES) - Charli
+const getAllMaps = function () {
+  return db.query(`
+  SELECT maps.*, COUNT(favourites.map_id) AS favourites_count
+  FROM maps
+  LEFT JOIN favourites ON maps.id = favourites.map_id
+  GROUP BY maps.id
+  ORDER BY favourites_count DESC;
+  `)
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.error(err.message);
+    });
+};
 
 
 const getMapid = function (userId, mapId) {
