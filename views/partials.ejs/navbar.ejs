@@ -1,2 +1,50 @@
 <!--nav bar partial will b here-->>
 <!DOCTYPE html>
+
+<nav>
+  <span class="logo">Wiki Maps</span>
+  <div><img src="/images/profile-hex.png"></div>
+  <h2>Username</h2>
+  <section class="user-options">
+    <h3>Search</h3>
+    <div>
+      <form id= "maps-search">
+        <label for="nav-search">Enter a valid place on Earth.</label>
+        <textarea name="text" id="nav-search"></textarea>
+        <div>
+          <button type="submit">search</button>
+        </div>
+      </form>
+    </div>
+    <h3>Favourite Maps</h3>
+    <div class="favourite-maps">
+      <form method = "POST" action = "/api/maps/:id">
+        <button type= "submit">Map #</button>
+      </form>
+      <form method = "POST" action = "/api/maps/:id">
+        <button type= "submit">Map #</button>
+      </form>
+      <form method = "POST" action = "/api/maps/:id">
+        <button type= "submit">Map #</button>
+      </form>
+    </div>
+
+    <h3>Contributed Maps</h3>
+    <div class="contributed-maps">
+      <form method = "POST" action = "/api/maps/:id">
+        <button type= "submit">Map #</button>
+      </form>
+      <form method = "POST" action = "/api/maps/:id">
+        <button type= "submit">Map #</button>
+      </form>
+      <form method = "POST" action = "/api/maps/:id">
+        <button type= "submit">Map #</button>
+      </form>
+    </div>
+    <div>
+      <form method = "POST" action = "/logout">
+        <button type= "submit">Logout</button>
+      </form>
+    </div>
+  </section>
+</nav>
