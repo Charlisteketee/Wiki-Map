@@ -1,6 +1,18 @@
 // See: https://sass-lang.com/
 
-body,
+$nav-bg-color: #fff;
+$nav-text-color: #333;
+
+body {
+  color: $nav-text-color;
+  background-color: $nav-bg-color;
+  font-size: 10px;
+  font-family: 'playfair', sans-serif;
+  flex-direction: row;
+  display: flex;
+}
+
 html {
+  box-sizing: border-box;
   margin: 0;
 }

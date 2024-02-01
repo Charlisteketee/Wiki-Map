@@ -1,0 +1,37 @@
+/* Define SCSS variables for colors */
+$nav-bg-color: #444343e1;
+$nav-text-color: #fff;
+
+/* Apply styles to the nav section */
+nav {
+  background-color: $nav-bg-color;
+  color: $nav-text-color;
+  padding: 10px;
+
+  /* Use flexbox to control layout */
+  display: flex;
+  flex: 1;
+  flex-direction: column; /* Stack child elements vertically */
+  justify-content: space-between;
+  width: 90px;
+  display: inline-block
+}
+
+/* Apply styles to the logo */
+.logo {
+  font-size: 1.5rem;
+}
+
+/* Apply styles to the user options */
+.user-options {
+  
+}
+
+/* Style the profile image */
+.user-options img {
+  width: 40px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+
