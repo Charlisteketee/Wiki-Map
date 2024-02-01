@@ -2,7 +2,6 @@
 const db = require('../connection');
 //get user id function LOW PRIORITY. CREATOR ID
 // insert point function -Paul
-// query filter by location for search bar. - Charli
 // delete map function -Luiza
 // delete point function - Luiza
 // edit point UPDATE tablename SET column_name = new value WHERE some condition
@@ -78,5 +77,24 @@ const createMap = function (mapObject) {
       console.error(err.message)
     })
 }
+
+// query filter by location for search bar. - Charli
+const filterMapsByLocation = function (location) {
+  const queryParams = [`%${location}%`]; // use % wildcard for partial matches
+
+  // ILIKE for case-insensitive search
+  const queryString = `
+  SELECT * FROM maps
+  WHERE location ILIKE $1;
+  `;
+
+  return db.query(queryString, queryParams)
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
 
 module.exports = {-----};
