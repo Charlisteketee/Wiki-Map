@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        /* Set a specific height for the map container */
+        .map-container {
+            width: 800px;
+            height: 600px;
+            margin: 10px;
+            float: left; /* Arrange maps side by side */
+        }
+    </style>
+</head>
+<body>
+    <!-- First Map Container -->
+    <div class="map-container" id="map1"></div>
+
+    <!-- Second Map Container -->
+    <div class="map-container" id="map2"></div>
+
+    <script>
+        // Create the first map
+        var map1 = L.map('map1').setView([51.505, -0.09], 12);
+
+        // Define tile layers and other settings for map1 here
+        var Esri_WorldImagery1 = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
+        // Add the Esri World Imagery tile layer to map1
+        Esri_WorldImagery1.addTo(map1);
+
+        // Create an array of marker coordinates for map1
+        var markerCoordinates1 = [
+            [51.505, -0.09],
+            [51.515, -0.1],
+            [51.525, -0.11]
+            // Add more coordinates as needed
+        ];
+
+        // Create an empty bounds object for map1
+        var bounds1 = L.latLngBounds();
+
+        // Loop through the marker coordinates and add markers to map1
+        for (var i = 0; i < markerCoordinates1.length; i++) {
+            var marker = L.marker(markerCoordinates1[i]).addTo(map1);
+            bounds1.extend(marker.getLatLng()); // Extend the bounds for each marker
+        }
+        //Padding so no point is covered
+        var padding1 = 0.1;
+        bounds1.pad(padding1);
+        // Fit map1 to the bounds
+        map1.fitBounds(bounds1);
+
+        // Create the second map
+        var map2 = L.map('map2').setView([40.7128, -74.0060], 12);
+
+        // Define tile layers and other settings for map2 here
+        var OpenStreetMap_HOT2 = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+        });
+        // Add the OpenStreetMap HOT tile layer to map2
+        OpenStreetMap_HOT2.addTo(map2);
+
+        // Create an array of marker coordinates for map2
+        var markerCoordinates2 = [
+            [40.7128, -74.0060],
+            [40.7213, -73.9878],
+            [40.7312, -73.9985]
+            // Add more coordinates as needed
+        ];
+
+        // Create an empty bounds object for map2
+        var bounds2 = L.latLngBounds();
+
+        // Loop through the marker coordinates and add markers to map2
+        for (var j = 0; j < markerCoordinates2.length; j++) {
+            var marker = L.marker(markerCoordinates2[j]).addTo(map2);
+            bounds2.extend(marker.getLatLng()); // Extend the bounds for each marker
+        }
+        //Padding so no point is covered
+        var padding2 = 0.1;
+        bounds2.pad(padding2);
+        // Fit map2 to the bounds
+        map2.fitBounds(bounds2);
+    </script>
+</body>
+</html>
