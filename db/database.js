@@ -24,6 +24,23 @@ const getAllMaps = function () {
     });
 };
 
+//get html (ALL MAPS, DESCENDING ORDER BY FAVOURITES) - Charli
+const getAllMaps = function () {
+  return db.query(`
+  SELECT maps.*, COUNT(favourites.map_id) AS favourites_count
+  FROM maps
+  LEFT JOIN favourites ON maps.id = favourites.map_id
+  GROUP BY maps.id
+  ORDER BY favourites_count DESC;
+  `)
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.error(err.message);
+    });
+};
+
 
 const getMapId = function (userId, mapId) {
   return db.query('SELECT * FROM maps WHERE user_id = $1 AND id = $2;', [userId, mapId])
@@ -136,4 +153,4 @@ const filterMapsByLocation = function (location) {
     });
 };
 
-module.exports = {-----};
+//module.exports = {-----};
