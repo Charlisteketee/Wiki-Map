@@ -31,7 +31,8 @@ app.use(express.static('public'));
 //const userApiRoutes = require('./routes/users-api');
 // const widgetApiRoutes = require('./routes/widgets-api');
 //const usersRoutes = require('./routes/users');
-const navbarApiRoutes = require('./routes/navbar-api');
+//const navbarApiRoutes = require('./routes/navbar-api');
+const mapsApiRoutes = require('./routes/maps-api');
 
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
@@ -39,7 +40,8 @@ const navbarApiRoutes = require('./routes/navbar-api');
 //app.use('/api/database', userApiRoutes(db));
 //app.use('/api/widgets', widhes);
 //app.use('/users', usersRoutes);
-app.use('/api/maps', navbarApiRoutes) // not sure what this route should be as it is a partial?
+// app.use('/api/maps', navbarApiRoutes) // not sure what this route should be as it is a partial?
+app.use('/maps', mapsApiRoutes);
 // Note: mount other resources here, using the same pattern above
 
 // Home page

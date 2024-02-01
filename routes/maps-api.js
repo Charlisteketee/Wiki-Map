@@ -7,12 +7,13 @@
 
 const express = require('express');
 const router  = express.Router();
-const userQueries = require('../db/queries/database');
+const mapQueries = require('../db/queries/database');
 
-/* user-api example:
+
 router.get('/', (req, res) => {
-  userQueries.getUsers()
+  mapQueries.getAllMaps()
     .then(users => {
+      console.log("Getting all maps");
       res.json({ users });
     })
     .catch(err => {
@@ -21,5 +22,5 @@ router.get('/', (req, res) => {
         .json({ error: err.message });
     });
 });
-*/
+
 module.exports = router;
