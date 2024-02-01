@@ -1,5 +1,13 @@
 // lets do all database queries here.
 const db = require('../connection');
+//get html (ALL MAPS, DESCENDING ORDER BY FAVOURITES) - Charli
+//get user id function LOW PRIORITY. CREATOR ID
+// insert point function -Paul
+// query filter by location for search bar. - Charli
+// delete map function -Luiza
+// delete point function - Luiza
+// edit point UPDATE tablename SET column_name = new value WHERE some condition
+
 
 const getMapid = function (userId, mapId) {
   return db.query('SELECT * FROM maps WHERE user_id = $1 AND id = $2;', [userId, mapId])
@@ -20,7 +28,12 @@ const getFavourites = function (userId) {
       console.log(err.message);
     });
 };
-
+const createPoint = function (pointObject){
+  const queryParams = [
+    points.id,
+    points.map_id
+  ]
+}
 const createMap = function (mapObject) {
   const queryParams = [
     maps.id,
