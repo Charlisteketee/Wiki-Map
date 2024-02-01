@@ -11,3 +11,4 @@ CREATE TABLE users (
   avatar_url VARCHAR (255) NOT NULL,
   location VARCHAR (255) NOT NULL
 );
+
