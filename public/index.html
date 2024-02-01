@@ -7,16 +7,9 @@
     <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
     <style>
         /* Set a specific height for the map container */
-        .map-container {
+        #map {
             width: 800px;
             height: 600px;
-            margin: 10px;
-            float: left; /* Arrange maps side by side */
-        }
-
-        #createNewMap {
-            display: block;
-            margin: 10px;
         }
     </style>
     <title>Wiki Maps - Home Page</title>
@@ -81,7 +74,10 @@
 
     <main class="maps">
     <!-- Container for Maps -->
-    <div id="maps-container"></div>
+    <h1>Draw and Create a New Map</h1>
+
+    <!-- Map Container -->
+    <div id="map"></div>
 
     <!-- Button to Create New Map -->
     <button id="createNewMap">Create New Map</button>
@@ -89,66 +85,36 @@
     <!-- Coordinates Display -->
     <div id="coordinates"></div>
 
-    <!-- Container for the New Map -->
-    <div id="new-map-container"></div>
-
     <script>
-        // Map settings array
-        var mapSettings = [
-            // Define your map settings as before
-        ];
+        // Create the map
+        var map = L.map('map').setView([51.505, -0.09], 12);
 
-        // Function to create and render maps
-        function createMaps() {
-            var mapsContainer = document.getElementById('maps-container');
+        // Define the tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+        }).addTo(map);
 
-            mapSettings.forEach(function (setting, index) {
-                // Create a map container div
-                var mapDiv = document.createElement('div');
-                mapDiv.className = 'map-container';
-                mapDiv.id = 'map-' + index;
-                mapsContainer.appendChild(mapDiv);
+        // Enable drawing tools (Polygon, Rectangle, etc.) on the map
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
 
-                // Create the map
-                var map = L.map('map-' + index).setView(setting.center, setting.zoom);
+        var drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems
+            }
+        });
+        map.addControl(drawControl);
 
-                // Define the tile layer
-                var tileLayer = L.tileLayer(setting.tileLayerUrl, {
-                    attribution: setting.attribution
-                }).addTo(map);
+        // Handle when a user draws a shape (e.g., polygon) on the map
+        map.on('draw:created', function (e) {
+            var layer = e.layer;
+            drawnItems.addLayer(layer);
 
-                // Create an empty bounds object
-                var bounds = L.latLngBounds();
-
-                // Loop through the marker coordinates and add markers to the map
-                setting.markers.forEach(function (coords) {
-                    var marker = L.marker(coords).addTo(map);
-                    bounds.extend(marker.getLatLng()); // Extend the bounds for each marker
-                });
-
-                // Add padding to the bounds after fitting the map
-                var padding = 0.1;
-                map.fitBounds(bounds.pad(padding));
-
-                // Enable drawing tools (Polygon, Rectangle, etc.) on the map
-                var drawControl = new L.Control.Draw({
-                    edit: {
-                        featureGroup: map
-                    }
-                });
-                map.addControl(drawControl);
-
-                // Handle when a user draws a shape (e.g., polygon) on the map
-                map.on('draw:created', function (e) {
-                    var layer = e.layer;
-                    map.addLayer(layer);
-
-                    // Get the coordinates of the drawn shape
-                    var coordinates = layer.toGeoJSON().geometry.coordinates;
-                    displayCoordinates(coordinates);
-                });
-            });
-        }
+            // Get the coordinates of the drawn shape
+            var coordinates = layer.toGeoJSON().geometry.coordinates;
+            displayCoordinates(coordinates);
+        });
 
         // Function to display coordinates
         function displayCoordinates(coordinates) {
@@ -157,14 +123,18 @@
 
         // Event listener for the "Create New Map" button
         document.getElementById('createNewMap').addEventListener('click', function () {
-            var coordinates = document.getElementById('coordinates').textContent;
+            var coordinates = drawnItems.toGeoJSON().geometry.coordinates;
 
-            // Create a new map using the retrieved coordinates (customize as needed)
-            createNewMap(JSON.parse(coordinates));
+            // Create a new map using the drawn coordinates (customize as needed)
+            createNewMap(coordinates);
         });
 
         // Function to create a new map based on coordinates (customize as needed)
         function createNewMap(coordinates) {
+            // Add your code here to create a new map using the retrieved coordinates
+            // You can use the Leaflet library to create a new map, set markers, and customize the map as desired.
+            // Here's a basic example:
+
             // Create a new map centered around the first coordinate point
             var newMap = L.map('new-map').setView(coordinates[0][0], 12);
 
@@ -180,9 +150,6 @@
             // You can append the new map to a div element in your existing page
             document.getElementById('new-map-container').appendChild(newMap.getContainer());
         }
-
-        // Call the function to create and render maps
-        createMaps();
     </script>
     </main>
   </body>
