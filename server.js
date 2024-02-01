@@ -29,8 +29,9 @@ app.use(express.static('public'));
 // Separated Routes for each Resource
 // Note: Feel free to replace the example routes below with your own
 //const userApiRoutes = require('./routes/users-api');
-const widgetApiRoutes = require('./routes/widgets-api');
+// const widgetApiRoutes = require('./routes/widgets-api');
 //const usersRoutes = require('./routes/users');
+const navbarApiRoutes = require('./routes/navbar-api');
 
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
@@ -38,6 +39,7 @@ const widgetApiRoutes = require('./routes/widgets-api');
 //app.use('/api/database', userApiRoutes(db));
 //app.use('/api/widgets', widhes);
 //app.use('/users', usersRoutes);
+app.use('/api/maps', navbarApiRoutes) // not sure what this route should be as it is a partial?
 // Note: mount other resources here, using the same pattern above
 
 // Home page
