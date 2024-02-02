@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    <style>
+        /* Set a specific height for the map container */
+        .map-container {
+            width: 800px;
+            height: 600px;
+            margin: 10px;
+            float: left; /* Arrange maps side by side */
+        }
+
+        #createNewMap {
+            display: block;
+            margin: 10px;
+        }
+    </style>
+    <title>Wiki Maps - Home Page</title>
+
+    <!-- External CSS -->
+
+    <!-- App CSS -->
+
+    <!-- External JS -->
+
+    <!-- App JS -->
+  </head>
+
+  <body>
+    <nav>
+      <span class="logo">Wiki Maps</span>
+      <div><img src="/images/profile-hex.png"></div>
+      <h2>Username</h2>
+      <section class="user-options">
+        <h3>Search</h3>
+        <div>
+          <form id= "maps-search">
+            <label for="nav-search">Enter a valid place on Earth.</label>
+            <textarea name="text" id="nav-search"></textarea>
+            <div>
+              <button type="submit">search</button>
+            </div>
+          </form>
+        </div>
+        <h3>Favourite Maps</h3>
+        <div class="favourite-maps">
+          <form method = "POST" action = "/api/maps/:id">
+            <button type= "submit">Map #</button>
+          </form>
+          <form method = "POST" action = "/api/maps/:id">
+            <button type= "submit">Map #</button>
+          </form>
+          <form method = "POST" action = "/api/maps/:id">
+            <button type= "submit">Map #</button>
+          </form>
+        </div>
+
+        <h3>Contributed Maps</h3>
+        <div class="contributed-maps">
+          <form method = "POST" action = "/api/maps/:id">
+            <button type= "submit">Map #</button>
+          </form>
+          <form method = "POST" action = "/api/maps/:id">
+            <button type= "submit">Map #</button>
+          </form>
+          <form method = "POST" action = "/api/maps/:id">
+            <button type= "submit">Map #</button>
+          </form>
+        </div>
+        <div>
+          <form method = "POST" action = "/logout">
+            <button type= "submit">Logout</button>
+          </form>
+        </div>
+      </section>
+    </nav>
+
+    <main class="maps">
+    <!-- Container for Maps -->
+    <div id="maps-container"></div>
+
+    <!-- Button to Create New Map -->
+    <button id="createNewMap">Create New Map</button>
+
+    <!-- Coordinates Display -->
+    <div id="coordinates"></div>
+
+    <!-- Container for the New Map -->
+    <div id="new-map-container"></div>
+
+    <script>
+        // Map settings array
+        var mapSettings = [
+            // Define your map settings as before
+        ];
+
+        // Function to create and render maps
+        function createMaps() {
+            var mapsContainer = document.getElementById('maps-container');
+
+            mapSettings.forEach(function (setting, index) {
+                // Create a map container div
+                var mapDiv = document.createElement('div');
+                mapDiv.className = 'map-container';
+                mapDiv.id = 'map-' + index;
+                mapsContainer.appendChild(mapDiv);
+
+                // Create the map
+                var map = L.map('map-' + index).setView(setting.center, setting.zoom);
+
+                // Define the tile layer
+                var tileLayer = L.tileLayer(setting.tileLayerUrl, {
+                    attribution: setting.attribution
+                }).addTo(map);
+
+                // Create an empty bounds object
+                var bounds = L.latLngBounds();
+
+                // Loop through the marker coordinates and add markers to the map
+                setting.markers.forEach(function (coords) {
+                    var marker = L.marker(coords).addTo(map);
+                    bounds.extend(marker.getLatLng()); // Extend the bounds for each marker
+                });
+
+                // Add padding to the bounds after fitting the map
+                var padding = 0.1;
+                map.fitBounds(bounds.pad(padding));
+
+                // Enable drawing tools (Polygon, Rectangle, etc.) on the map
+                var drawControl = new L.Control.Draw({
+                    edit: {
+                        featureGroup: map
+                    }
+                });
+                map.addControl(drawControl);
+
+                // Handle when a user draws a shape (e.g., polygon) on the map
+                map.on('draw:created', function (e) {
+                    var layer = e.layer;
+                    map.addLayer(layer);
+
+                    // Get the coordinates of the drawn shape
+                    var coordinates = layer.toGeoJSON().geometry.coordinates;
+                    displayCoordinates(coordinates);
+                });
+            });
+        }
+
+        // Function to display coordinates
+        function displayCoordinates(coordinates) {
+            document.getElementById('coordinates').innerHTML = 'Coordinates: ' + JSON.stringify(coordinates);
+        }
+
+        // Event listener for the "Create New Map" button
+        document.getElementById('createNewMap').addEventListener('click', function () {
+            var coordinates = document.getElementById('coordinates').textContent;
+
+            // Create a new map using the retrieved coordinates (customize as needed)
+            createNewMap(JSON.parse(coordinates));
+        });
+
+        // Function to create a new map based on coordinates (customize as needed)
+        function createNewMap(coordinates) {
+            // Create a new map centered around the first coordinate point
+            var newMap = L.map('new-map').setView(coordinates[0][0], 12);
+
+            // Define the tile layer for the new map
+            L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+                maxZoom: 20,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+            }).addTo(newMap);
+
+            // Add markers or shapes to the new map based on the retrieved coordinates
+            // Customize the new map as needed
+
+            // You can append the new map to a div element in your existing page
+            document.getElementById('new-map-container').appendChild(newMap.getContainer());
+        }
+
+        // Call the function to create and render maps
+        createMaps();
+    </script>
+    </main>
+  </body>
+</html>
