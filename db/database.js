@@ -153,4 +153,38 @@ const filterMapsByLocation = function (location) {
     });
 };
 
+const deleteMap = function (mapId) {
+  return db.query('DELETE FROM maps WHERE id = $1', [mapId])
+  .then(result => {
+    if (result.rowCount > 0) {
+      console.log('Map deleted successfully.');
+      return true;
+    } else {
+      console.log('Map not found.');
+      return false;
+    }
+  })
+  .catch(error => {
+    console.error('Error deleting map:', error);
+    throw error;
+  });
+};
+
+const deletePoint = function (pointId) {
+  return db.query('DELETE FROM points WHERE id = $1', [pointId])
+  .then(result => {
+    if (result.rowCount > 0) {
+      console.log('Point deleted successfully.');
+      return true;
+    } else {
+      console.log('Point not found.');
+      return false;
+    }
+  })
+  .catch(error => {
+    console.error('Error deleting point:', error);
+    throw error;
+  });
+};
+
 //module.exports = {-----};
