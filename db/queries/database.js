@@ -170,4 +170,4 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = { getAllMaps };
+module.exports = { getAllMaps, getMapId };

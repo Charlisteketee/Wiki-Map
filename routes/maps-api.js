@@ -12,9 +12,8 @@ const mapQueries = require('../db/queries/database');
 
 router.get('/', (req, res) => {
   mapQueries.getAllMaps()
-    .then(users => {
-      console.log("Getting all maps");
-      res.json({ users });
+    .then(maps => {
+      res.json({ maps });
     })
     .catch(err => {
       res
@@ -22,5 +21,6 @@ router.get('/', (req, res) => {
         .json({ error: err.message });
     });
 });
+
 
 module.exports = router;
