@@ -35,7 +35,7 @@ const widgetApiRoutes = require('./routes/widgets-api');
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
 // Note: Endpoints that return data (eg. JSON) usually start with `/api`
-//app.use('/api/database', userApiRoutes);
+//app.use('/api/database', userApiRoutes(db));
 //app.use('/api/widgets', widhes);
 //app.use('/users', usersRoutes);
 // Note: mount other resources here, using the same pattern above
