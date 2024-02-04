@@ -44,6 +44,7 @@ const getFavourites = function (userId) {
       console.log(err.message);
     });
 };
+
 const updatePoint = function (pointObject) {
   const queryParams = [
     points.body,
@@ -61,6 +62,7 @@ const updatePoint = function (pointObject) {
     console.error(err.message)
   })
 }
+
 const createPoint = function (pointObject) {
   const queryParams = [
     points.id,// need generate id function
@@ -87,6 +89,7 @@ const createPoint = function (pointObject) {
     console.error(err.message)
   })
 }
+
 const createMap = function (mapObject) {
   const queryParams = [
     maps.id, // need generate id function
@@ -170,4 +173,4 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = { getAllMaps, getMapId };
+module.exports = { getAllMaps, getMapId, updatePoint, createPoint };
