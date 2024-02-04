@@ -42,7 +42,7 @@ const mapsApiRoutes = require('./routes/maps-api');
 //app.use('/api/widgets', widhes);
 //app.use('/users', usersRoutes);
 // app.use('/api/maps', navbarApiRoutes) // not sure what this route should be as it is a partial?
-app.use('/maps', mapsApiRoutes);
+app.use('/maps', mapsApiRoutes); // We can change the route (/maps) to just / once we have organized the index.ejs file
 // Note: mount other resources here, using the same pattern above
 
 // Home page
