@@ -27,6 +27,7 @@ router.post('/api/maps/:id/points/:pointid', (req, res) => {
     });
 });
 
+// edit a point
 router.post('/api/maps/:id/points/:pointid/edit', (req, res) => {
   const { id, pointid } = req.params;
   const { body, image_url } = req.body;
@@ -42,6 +43,19 @@ router.post('/api/maps/:id/points/:pointid/edit', (req, res) => {
         .json({ error: err.message });
     });
 });
+
+// delete a point
+router.delete('/api/maps/:id/points/:pointid', (req, res) => {
+  const { pointid } = req.params;
+  pointQueries.deletePoint(pointid)
+    .then(() => {
+      res.json({ message: 'Point deleted successfully' });
+    })
+    .catch(err => {
+      res.status(500).json({ error: err.message });
+    });
+});
+
 
 
 

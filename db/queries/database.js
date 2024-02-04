@@ -173,4 +173,4 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = { getAllMaps, getMapId, updatePoint, createPoint };
+module.exports = { getAllMaps, getMapId, createMap, updatePoint, createPoint, deletePoint };
