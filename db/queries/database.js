@@ -44,6 +44,7 @@ const getFavourites = function (userId) {
       console.log(err.message);
     });
 };
+
 const updatePoint = function (pointObject) {
   const queryParams = [
     points.body,
@@ -61,6 +62,7 @@ const updatePoint = function (pointObject) {
     console.error(err.message)
   })
 }
+
 const createPoint = function (pointObject) {
   const queryParams = [
     points.id,// need generate id function
@@ -87,13 +89,15 @@ const createPoint = function (pointObject) {
     console.error(err.message)
   })
 }
+
 const createMap = function (mapObject) {
   const queryParams = [
     maps.id, // need generate id function
     maps.user_id,// need generate id function
     maps.title,
     maps.description,
-    maps.location,
+    maps.longtitude,
+    maps.latitude,
     maps.created_at,
     maps.updated_at
   ];
@@ -102,10 +106,11 @@ const createMap = function (mapObject) {
     user_id,
     title,
     description,
-    location,
+    longtitude,
+    latitude,
     created_at,
     updated_at
-  ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+  ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     RETURNING *
 `;
 
@@ -117,14 +122,14 @@ const createMap = function (mapObject) {
 };
 generateUniqueRandomNumber('maps', 'map_id')
 
-// query filter by location for search bar. - Charli
-const filterMapsByLocation = function (location) {
-  const queryParams = [`%${location}%`]; // use % wildcard for partial matches
+// query filter by title for search bar. - Charli
+const filterMapsByTitle = function (title) {
+  const queryParams = [`%${title}%`]; // use % wildcard for partial matches
 
   // ILIKE for case-insensitive search
   const queryString = `
   SELECT * FROM maps
-  WHERE location ILIKE $1;
+  WHERE title ILIKE $1;
   `;
 
   return db.query(queryString, queryParams)
@@ -170,4 +175,4 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = { getAllMaps, getMapId };
+module.exports = { getAllMaps, getMapId, createMap, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap };
