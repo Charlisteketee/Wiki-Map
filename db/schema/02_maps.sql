@@ -5,7 +5,8 @@ CREATE TABLE maps (
   user_id INTEGER REFERENCES users(id) NOT NULL,
   title VARCHAR (255) NOT NULL,
   description TEXT,
-  location VARCHAR(255) NOT NULL,
+  longtitude DECIMAL(3, 6) NOT NULL,
+  latitude DECIMAL(3, 6) NOT NULL,
   created_at DATE NOT NULL,
   updated_at DATE NOT NULL
 );

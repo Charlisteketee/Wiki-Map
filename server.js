@@ -36,6 +36,7 @@ const mapsApiRoutes = require('./routes/maps-api');
 const pointsApiRoutes = require('./routes/points-api');
 
 
+
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
 // Note: Endpoints that return data (eg. JSON) usually start with `/api`

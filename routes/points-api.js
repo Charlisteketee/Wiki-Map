@@ -10,7 +10,7 @@ const router  = express.Router();
 const pointQueries = require('../db/queries/database');
 
 
-// this route is intended to handle requests to create a new point within a map
+// create a new point within a map
 router.post('/api/maps/:id/points/:pointid', (req, res) => {
   const { id } = req.params;
   const { title, body, image_url } = req.body;
