@@ -69,6 +69,8 @@ const createPoint = function (pointObject) {
     points.map_id, // need generate id function
     points.title,
     points.body,
+    points.longtitude,
+    points.latitude,
     points.image_url,
     points.created_at,
     points.updated_at,
@@ -78,6 +80,8 @@ const createPoint = function (pointObject) {
     user_id,
     title,
     body,
+    longtitude,
+    latitude,
     image_url,
     created_at,
     updated_at,
