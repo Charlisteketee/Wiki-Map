@@ -1,119 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-  <title>Home Page</title>
-
-  <meta charset="UTF-8" >
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" >
-
-  <link rel="stylesheet" href="/vendor/normalize-4.1.1.css" />
-  <link rel="stylesheet" href="/vendor/border-box.css" />
-  <link rel="stylesheet" href="/styles/layout.css" />
-  <link rel="stylesheet" href="/styles/navbar.css" />
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
-
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
-  <style>
-      /* Set a specific height for the map container */
-      #map {
-          width: 800px;
-          height: 600px;
-      }
-  </style>
-    <link rel="stylesheet" href="/styles/maps.css">
-
-
-  <script src="/vendor/jquery-3.0.0.js"></script>
-  <script defer src="/scripts/app.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        /* Set a specific height for the map container */
+        .map-container {
+            width: 800px;
+            height: 600px;
+            margin: 10px;
+            float: left; /* Arrange maps side by side */
+        }
+    </style>
 </head>
-
 <body>
-  <%- include('partials/_navbar') %>
-  <main class="maps">
-    <!-- Container for Maps -->
-    <h1>Draw and Create a New Map</h1>
-
-    <!-- Map Container -->
-    <div id="map"></div>
-
-    <!-- Button to Create New Map -->
-    <button id="createNewMap">Create New Map</button>
-
-    <!-- Coordinates Display -->
-    <div id="coordinates"></div>
+    <!-- Container for Existing Maps -->
+    <div id="maps-container"></div>
 
     <script>
-        // Create the map
-        var map = L.map('map').setView([51.505, -0.09], 12);
-
-        // Define the tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-            maxZoom: 20,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
-        }).addTo(map);
-
-        // Enable drawing tools (Polygon, Rectangle, etc.) on the map
-        var drawnItems = new L.FeatureGroup();
-        map.addLayer(drawnItems);
-
-        var drawControl = new L.Control.Draw({
-            edit: {
-                featureGroup: drawnItems
+        // Existing map settings with padding
+        var mapSettings = [
+            {
+                center: [51.515, -0.1],
+                tileLayerUrl: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
+                markers: [
+                    { coords: [51.505, -0.09] }, // Marker 1
+                    { coords: [51.515, -0.1] },  // Marker 2
+                    { coords: [51.525, -0.11] }  // Marker 3
+                ]
+            },
+            {
+                center: [40.7213, -73.9878],
+                tileLayerUrl: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
+                markers: [
+                    { coords: [40.7128, -74.0060] }, // Marker 1
+                    { coords: [40.7213, -73.9878] },  // Marker 2
+                    { coords: [40.7312, -73.9985] }  // Marker 3
+                ]
             }
-        });
-        map.addControl(drawControl);
+        ];
 
-        // Handle when a user draws a shape (e.g., polygon) on the map
-        map.on('draw:created', function (e) {
-            var layer = e.layer;
-            drawnItems.addLayer(layer);
+        // Function to create and render maps with padding
+        function createMaps() {
+            var mapsContainer = document.getElementById('maps-container');
 
-            // Get the coordinates of the drawn shape
-            var coordinates = layer.toGeoJSON().geometry.coordinates;
-            displayCoordinates(coordinates);
-        });
+            mapSettings.forEach(function (setting, index) {
+                // Create a map container div
+                var mapDiv = document.createElement('div');
+                mapDiv.className = 'map-container';
+                mapDiv.id = 'map-' + index;
+                mapsContainer.appendChild(mapDiv);
 
-        // Function to display coordinates
-        function displayCoordinates(coordinates) {
-            document.getElementById('coordinates').innerHTML = 'Coordinates: ' + JSON.stringify(coordinates);
+                // Create the map
+                var map = L.map('map-' + index).setView(setting.center, 12);
+
+                // Define the tile layer
+                L.tileLayer(setting.tileLayerUrl, {
+                    attribution: setting.attribution
+                }).addTo(map);
+
+                // Add markers to the map based on the setting
+                setting.markers.forEach(function (marker) {
+                    var coords = marker.coords;
+                    L.marker(coords).addTo(map);
+                });
+
+                // Adjust the zoom and center to include all markers with padding
+                var group = new L.featureGroup(setting.markers.map(function (marker) {
+                    return L.marker(marker.coords);
+                }));
+                map.fitBounds(group.getBounds().pad(0.2)); // Adjust the padding factor as needed
+            });
         }
 
-        // Event listener for the "Create New Map" button
-        document.getElementById('createNewMap').addEventListener('click', function () {
-            var coordinates = drawnItems.toGeoJSON().geometry.coordinates;
-
-            // Create a new map using the drawn coordinates (customize as needed)
-            createNewMap(coordinates);
-        });
-
-        // Function to create a new map based on coordinates (customize as needed)
-        function createNewMap(coordinates) {
-            // Add your code here to create a new map using the retrieved coordinates
-            // You can use the Leaflet library to create a new map, set markers, and customize the map as desired.
-            // Here's a basic example:
-
-            // Create a new map centered around the first coordinate point
-            var newMap = L.map('new-map').setView(coordinates[0][0], 12);
-
-            // Define the tile layer for the new map
-            L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-                maxZoom: 20,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
-            }).addTo(newMap);
-
-            // Add markers or shapes to the new map based on the retrieved coordinates
-            // Customize the new map as needed
-
-            // You can append the new map to a div element in your existing page
-            document.getElementById('new-map-container').appendChild(newMap.getContainer());
-        }
+        // Call the function to create and render existing maps with padding
+        createMaps();
     </script>
-    </main>
 </body>
 </html>
-
