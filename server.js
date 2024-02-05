@@ -34,7 +34,7 @@ app.use(express.static('public'));
 //const navbarApiRoutes = require('./routes/navbar-api');
 const mapsApiRoutes = require('./routes/maps-api');
 const pointsApiRoutes = require('./routes/points-api');
-
+const favoritesApiRoutes = require('./routes/favourites-api');
 
 
 // Mount all resource routes
@@ -44,9 +44,16 @@ const pointsApiRoutes = require('./routes/points-api');
 //app.use('/api/widgets', widhes);
 //app.use('/users', usersRoutes);
 // app.use('/api/maps', navbarApiRoutes) // not sure what this route should be as it is a partial?
-app.use('/maps', mapsApiRoutes); // We can change the route (/maps) to just / once we have organized the index.ejs file
-app.use('/api/maps/:id/points/:pointid', pointsApiRoutes) // we also need /api/maps/:id/points/:pointid/edit and the DELETE point route from pointsApiRoutes, not sure how to add 2 of them
 // Note: mount other resources here, using the same pattern above
+app.use('/maps', mapsApiRoutes); // We can change the route (/maps) to just / once we have organized the index.ejs file
+app.use('/api/maps/search', mapsApiRoutes);
+app.use('/api/maps', mapsApiRoutes); // create a new map
+app.use('/api/maps/:mapid', mapsApiRoutes); // delete a map
+app.use('/api/maps/:id/points/:pointid', pointsApiRoutes); // create a new point
+app.use('/api/maps/:id/points/:pointid/edit', pointsApiRoutes); // edit a point
+app.use('/api/maps/:id/points/:pointid', pointsApiRoutes); // delete a point
+app.use('/api/users/:userId/favorites', favoritesApiRoutes);
+
 
 // Home page
 // Warning: avoid creating more routes in this file!
