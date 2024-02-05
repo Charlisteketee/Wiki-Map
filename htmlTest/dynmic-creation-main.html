@@ -2,11 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-select@2.0.0/dist/leaflet-select.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
-    <script src="https://unpkg.com/leaflet-select@2.0.0/dist/leaflet-select.js"></script>
     <style>
         /* Set a specific height for the map container */
         .map-container {
@@ -15,62 +11,38 @@
             margin: 10px;
             float: left; /* Arrange maps side by side */
         }
-
-        .new-map-container {
-            width: 400px; /* Adjust width as needed */
-            height: 600px; /* Adjust height as needed */
-            margin: 10px;
-            float: left; /* Arrange maps side by side */
-        }
     </style>
 </head>
 <body>
     <!-- Container for Existing Maps -->
-    <div id="maps-container">
-        <!-- First Map -->
-        <div class="map-container" id="map-0"></div>
-        <!-- Second Map -->
-        <div class="map-container" id="map-1"></div>
-    </div>
-
-    <!-- Container for the New Map -->
-    <div class="new-map-container" id="new-map"></div>
-
-    <!-- Customization Options for the New Map -->
-    <div class="custom-options">
-        <button id="createNewMap">Create New Map</button>
-        <button id="drawPolygon">Draw Polygon</button>
-        <button id="selectFeature">Select Feature</button>
-    </div>
+    <div id="maps-container"></div>
 
     <script>
-        // Existing map settings
+        // Existing map settings with padding
         var mapSettings = [
             {
-                center: [51.505, -0.09],
-                zoom: 12,
-                tileLayerUrl: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-                markers: [
-                    [51.505, -0.09],
-                    [51.515, -0.1],
-                    [51.525, -0.11]
-                ]
-            },
-            {
-                center: [40.7128, -74.0060],
-                zoom: 12,
+                center: [51.515, -0.1],
                 tileLayerUrl: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
                 markers: [
-                    [40.7128, -74.0060],
-                    [40.7213, -73.9878],
-                    [40.7312, -73.9985]
+                    { coords: [51.505, -0.09] }, // Marker 1
+                    { coords: [51.515, -0.1] },  // Marker 2
+                    { coords: [51.525, -0.11] }  // Marker 3
+                ]
+            },
+            {
+                center: [40.7213, -73.9878],
+                tileLayerUrl: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
+                markers: [
+                    { coords: [40.7128, -74.0060] }, // Marker 1
+                    { coords: [40.7213, -73.9878] },  // Marker 2
+                    { coords: [40.7312, -73.9985] }  // Marker 3
                 ]
             }
         ];
 
-        // Function to create and render maps
+        // Function to create and render maps with padding
         function createMaps() {
             var mapsContainer = document.getElementById('maps-container');
 
@@ -82,7 +54,7 @@
                 mapsContainer.appendChild(mapDiv);
 
                 // Create the map
-                var map = L.map('map-' + index).setView(setting.center, setting.zoom);
+                var map = L.map('map-' + index).setView(setting.center, 12);
 
                 // Define the tile layer
                 L.tileLayer(setting.tileLayerUrl, {
@@ -90,75 +62,21 @@
                 }).addTo(map);
 
                 // Add markers to the map based on the setting
-                setting.markers.forEach(function (coords) {
-                    var marker = L.marker(coords).addTo(map);
+                setting.markers.forEach(function (marker) {
+                    var coords = marker.coords;
+                    L.marker(coords).addTo(map);
                 });
+
+                // Adjust the zoom and center to include all markers with padding
+                var group = new L.featureGroup(setting.markers.map(function (marker) {
+                    return L.marker(marker.coords);
+                }));
+                map.fitBounds(group.getBounds().pad(0.2)); // Adjust the padding factor as needed
             });
         }
 
-        // Create a new map with customization options
-        function createNewMap() {
-            // Create a new map container div
-            var newMapDiv = document.getElementById('new-map');
-            newMapDiv.innerHTML = ''; // Clear the previous map if any
-
-            // Create the new map
-            var newMap = L.map('new-map').setView([0, 0], 1); // Initial view
-
-            // Define the tile layer for the new map
-            L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-                maxZoom: 20,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
-            }).addTo(newMap);
-
-            // Add drawing and select tools to the new map
-            var drawnItems = new L.FeatureGroup();
-            newMap.addLayer(drawnItems);
-
-            var drawControl = new L.Control.Draw({
-                draw: {
-                    polygon: true,
-                    polyline: false,
-                    rectangle: false,
-                    circle: false,
-                    marker: false
-                },
-                edit: {
-                    featureGroup: drawnItems,
-                    edit: false,
-                    remove: false
-                }
-            });
-            newMap.addControl(drawControl);
-
-            var selectControl = new L.Control.Select({
-                featureGroup: drawnItems
-            });
-            newMap.addControl(selectControl);
-
-            // Handle when a user draws a shape (e.g., polygon) on the new map
-            newMap.on('draw:created', function (e) {
-                var layer = e.layer;
-                drawnItems.addLayer(layer);
-
-                // Get the coordinates of the drawn shape
-                var coordinates = layer.toGeoJSON().geometry.coordinates;
-                displayCoordinates(coordinates);
-            });
-        }
-
-        // Function to display coordinates
-        function displayCoordinates(coordinates) {
-            document.getElementById('coordinates').innerHTML = 'Coordinates: ' + JSON.stringify(coordinates);
-        }
-
-        // Call the function to create and render existing maps
+        // Call the function to create and render existing maps with padding
         createMaps();
-
-        // Event listener for the "Create New Map" button
-        document.getElementById('createNewMap').addEventListener('click', function () {
-            createNewMap();
-        });
     </script>
 </body>
 </html>
