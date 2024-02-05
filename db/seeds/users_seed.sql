@@ -1,0 +1,11 @@
+INSERT INTO users (id, username, email, password, full_name, bio, avatar_url, location) VALUES
+('1', 'gilljesse', 'heatherthomas@hotmail.com', '%I7CKRhY1!', 'Christopher Little', 'Make many home difference lose. Happy pay process attention.', 'https://www.lorempixel.com/573/26', 'Wintersbury'),
+('2', 'brandi20', 'heathertownsend@gmail.com', ')h3&8lIiN3', 'Sean Moore', 'Major officer campaign. Sister few no result she.', 'https://placekitten.com/38/674', 'Kristinshire'),
+('3', 'scottwilliams', 'melaniemckee@charles.com', 'wd0yW9m67!', 'Christopher Coleman', 'Receive tree until reality when. Much discover be create member accept.', 'https://placeimg.com/303/437/any', 'New Sarah'),
+('4', 'michellesmith', 'jacquelinelove@hotmail.com', 'l2FL$_(y_+', 'Scott Atkinson', 'Shake person sing case door worry.', 'https://placekitten.com/671/901', 'Ashleyfort'),
+('5', 'lindseygross', 'rossbrittany@hotmail.com', '#SEJMeU+5a', 'Jennifer Griffin', 'Her serve born face age performance short. Alone center ready west issue let event.', 'https://dummyimage.com/784x1007', 'Knightchester'),
+('6', 'brownabigail', 'ariana46@james-miller.biz', '#HmItNNj1%', 'Colton Lamb', 'Age watch difficult sometimes season per little.', 'https://www.lorempixel.com/823/586', 'North Matthew'),
+('7', 'andrearobinson', 'wagnerhenry@yahoo.com', 'O1&BAjWE^9', 'Jerry James', 'Building campaign friend. Now dark simple spend firm.', 'https://placeimg.com/677/284/any', 'Port Michaelstad'),
+('8', 'fergusonashley', 'cooperjohn@frye.info', 'XnxLedIu+5', 'Kelly Salazar', 'Recently official set.', 'https://placeimg.com/861/352/any', 'East Garrettfort'),
+('9', 'orush', 'charles98@hotmail.com', '$h6&2Uu_7S', 'Cindy Barr', 'Anything trial tree miss. Conference today professor special appear answer.', 'https://www.lorempixel.com/410/453', 'Leahport'),
+('10', 'willissteven', 'destinycarter@hotmail.com', '4%lA6WX+Gy', 'Cameron Hill', 'Wait draw yeah need drive item. Doctor every travel. Challenge month similar drive.', 'https://placekitten.com/821/795', 'Port Angelamouth');

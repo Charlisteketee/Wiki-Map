@@ -3,6 +3,8 @@ CREATE TABLE points (
   id SERIAL PRIMARY KEY NOT NULL,
   --contributor_id INTEGER REFERENCES users(id) NOT NULL,
   map_id INTEGER REFERENCES maps(id) NOT NULL,
+  longitude DOUBLE PRECISION NOT NULL,
+  latitude DOUBLE PRECISION NOT NULL,
   title VARCHAR(255) NOT NULL,
   body TEXT,
   longtitude DOUBLE PRECISION(3, 6) NOT NULL,
