@@ -10,8 +10,10 @@ const router  = express.Router();
 const pointQueries = require('../db/queries/database');
 
 
+// routes append /api/maps/points
+
 // create a new point within a map
-router.post('/api/maps/:id/points/:pointid', (req, res) => {
+router.post('/:pointid', (req, res) => {
   const { id } = req.params;
   const { title, body, image_url } = req.body;
   // calls the createPoint() function, passing the extracted parameters
@@ -28,7 +30,7 @@ router.post('/api/maps/:id/points/:pointid', (req, res) => {
 });
 
 // edit a point
-router.post('/api/maps/:id/points/:pointid/edit', (req, res) => {
+router.post('/edit/:pointid', (req, res) => {
   const { id, pointid } = req.params;
   const { body, image_url } = req.body;
   // call the updatePoint() function, passing the extracted parameters.
@@ -45,7 +47,7 @@ router.post('/api/maps/:id/points/:pointid/edit', (req, res) => {
 });
 
 // delete a point
-router.delete('/api/maps/:id/points/:pointid', (req, res) => {
+router.delete('/delete/:pointid', (req, res) => {
   const { pointid } = req.params;
   pointQueries.deletePoint(pointid)
     .then(() => {
