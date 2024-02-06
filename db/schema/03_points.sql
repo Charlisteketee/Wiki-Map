@@ -7,8 +7,6 @@ CREATE TABLE points (
   latitude DOUBLE PRECISION NOT NULL,
   title VARCHAR(255) NOT NULL,
   body TEXT,
-  longtitude DOUBLE PRECISION(3, 6) NOT NULL,
-  latitude DOUBLE PRECISION(3, 6) NOT NULL,
   image_url VARCHAR(255) NOT NULL,
   created_at DATE NOT NULL,
   updated_at DATE NOT NULL

@@ -20,7 +20,45 @@
     </header>
     <!-- Container for Existing Maps -->
     <div id="maps-container"></div>
+    <script>
+      // Get the mapsWithPoints data from the server
+      const mapsWithPoints = <%- JSON.stringify(mapsWithPoints) %>;
 
-    <script src="./helper-functions/createMaps.js"></script>
+      // Function to create and render maps with padding
+      function createMaps() {
+        var mapsContainer = document.getElementById('maps-container');
+
+        mapsWithPoints.forEach(function (mapData, index) {
+          // Create a map container div
+          var mapDiv = document.createElement('div');
+          mapDiv.className = 'map-container';
+          mapDiv.id = 'map-' + index;
+          mapsContainer.appendChild(mapDiv);
+
+          // Create the map
+          var map = L.map('map-' + index).setView([mapData.latitude, mapData.longitude], 14);
+
+          // Define the tile layer
+          L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+          }).addTo(map);
+
+          // Add markers to the map based on the fetched data
+          mapData.markers.forEach(function (marker) {
+            var coords = [marker.latitude, marker.longitude];
+            L.marker(coords).addTo(map);
+          });
+
+          // Adjust the zoom and center to include all markers with padding
+          var group = new L.featureGroup(mapData.markers.map(function (marker) {
+            return L.marker([marker.latitude, marker.longitude]);
+          }));
+          map.fitBounds(group.getBounds().pad(0.2)); // Adjust the padding factor as needed
+        });
+      }
+
+      // Call the function to create and render existing maps with padding
+      createMaps(mapsWithPoints);
+    </script>
 </body>
 </html>
