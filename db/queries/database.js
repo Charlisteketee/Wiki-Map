@@ -23,8 +23,56 @@ const getAllMaps = function () {
       console.error(err.message);
     });
 };
-
-
+const getMapsData = function () {
+  return db.query('SELECT id, title, description, longitude, latitude FROM maps;')
+    .then(data => {
+      return (data.rows);
+    })
+    .catch((err) => {
+      console.error(err.message);
+    });
+};
+const getPointsData = function () {
+  return db.query('SELECT map_id, latitude, longitude FROM points;')
+    .then(data => {
+      return (data.rows);
+    })
+    .catch((err) => {
+      console.error(err.message);
+    });
+};
+const getAllMapLocations = function () {
+  return db.query(`
+  SELECT id, longitude, latitude
+  FROM maps
+  GROUP BY maps.id
+  ORDER BY favourites_count DESC;
+  `)
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.error(err.message);
+    });
+};
+const getAllUsers = function (userId) {
+  return db.query('SELECT * FROM users;')
+    .then(data => {
+      return data.rows[0];
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
+const getUserId = function (userId) {
+  return db.query('SELECT * FROM users WHERE user_id = $1;', [userId,])
+    .then(data => {
+      return data.rows[0];
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
 const getMapId = function (userId, mapId) {
   return db.query('SELECT * FROM maps WHERE user_id = $1 AND id = $2;', [userId, mapId])
     .then(data => {
@@ -170,4 +218,4 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = { getAllMaps, getMapId };
+module.exports = { getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations };

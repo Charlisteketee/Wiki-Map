@@ -33,7 +33,10 @@ app.use(express.static('public'));
 //const usersRoutes = require('./routes/users');
 //const navbarApiRoutes = require('./routes/navbar-api');
 const mapsApiRoutes = require('./routes/maps-api');
-
+const { getAllMaps, getMapsData, getPointsData, } = require('./db/queries/database');
+const {
+  associatePointsWithMaps,
+} = require('./helper-functions/leafletHelperFunctions');
 
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
@@ -49,8 +52,23 @@ app.use('/maps', mapsApiRoutes); // We can change the route (/maps) to just / on
 // Warning: avoid creating more routes in this file!
 // Separate them into separate routes files (see above).
 
-app.get('/', (req, res) => {
-  res.render('index');
+app.get('/', async (req, res) => {
+  try {
+    // Fetch map data from the database
+    const mapsData = await getMapsData();
+
+    // Fetch marker data (points) from the "points database"
+    const pointsData = await getPointsData();
+
+    // Associate marker data with each map based on map_id or any other relevant key
+    const mapsWithPoints = associatePointsWithMaps(mapsData, pointsData);
+
+    // Render the 'index' view and pass the maps data with associated points to it
+    res.render('index', { mapsWithPoints });
+  } catch (error) {
+    console.error('An error occurred:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 app.listen(PORT, () => {
