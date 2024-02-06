@@ -49,9 +49,7 @@ const usersRoutes = require('./routes/users');
 //const navbarApiRoutes = require('./routes/navbar-api');
 const mapsApiRoutes = require('./routes/maps-api');
 const { getAllMaps, getMapsData, getPointsData, } = require('./db/queries/database');
-const {
-  associatePointsWithMaps,
-} = require('./helper-functions/leafletHelperFunctions');
+const {associatePointsWithMaps} = require('./helper-functions/leafletHelperFunctions');
 const pointsApiRoutes = require('./routes/points-api');
 const favoritesApiRoutes = require('./routes/favourites-api');
 
@@ -69,18 +67,14 @@ app.use('/api/maps/points', pointsApiRoutes);
 
 app.use('/api/users/favorites', favoritesApiRoutes);
 
-
 // Home page
 // Warning: avoid creating more routes in this file!
 // Separate them into separate routes files (see above).
 
 app.get('/', async (req, res) => {
   try {
-    // Fetch map data from the database
-    const mapsData = await getMapsData();
-
-    // Fetch marker data (points) from the "points database"
-    const pointsData = await getPointsData();
+    // Use Promise.all to fetch both mapsData and pointsData concurrently
+    const [mapsData, pointsData] = await Promise.all([getMapsData(), getPointsData()]);
 
     // Associate marker data with each map based on map_id or any other relevant key
     const mapsWithPoints = associatePointsWithMaps(mapsData, pointsData);
