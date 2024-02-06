@@ -32,8 +32,9 @@ app.use(
 );
 app.use(express.static('public'));
 app.use(cookieParser()); // creates and populates req.cookies
+
+//middleware to show get id for every route. Could use req.params.user_id instead
 app.use((req, res, next) => {
-  console.log('Monkey fuzz');
   console.log('req.cookies', req.cookies);
   loggedInUser = req.cookies["user_id"];
   next();
@@ -58,10 +59,9 @@ const favoritesApiRoutes = require('./routes/favourites-api');
 //app.use('/api/database', userApiRoutes(db));
 //app.use('/api/widgets', widhes);
 app.use('/users', usersRoutes);
-// app.use('/api/maps', navbarApiRoutes) // not sure what this route should be as it is a partial?
 // Note: mount other resources here, using the same pattern above
-app.use('/api/maps', mapsApiRoutes); // We can change the route (/maps) to just / once we have organized the index.ejs file
-app.use('/api/maps/points', pointsApiRoutes); // create a new point
+app.use('/api/maps', mapsApiRoutes); // We can change the route (/api/maps) to just / once we have organized the index.ejs file
+app.use('/api/maps/points', pointsApiRoutes);
 
 app.use('/api/users/favorites', favoritesApiRoutes);
 

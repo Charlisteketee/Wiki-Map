@@ -9,6 +9,7 @@ const express = require('express');
 const router  = express.Router();
 const mapQueries = require('../db/queries/database');
 
+// Routes append /api/maps
 
 // get all maps
 router.get('/', (req, res) => {
