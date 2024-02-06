@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 8080;
 const app = express();
 
 app.set('view engine', 'ejs');
+let loggedInUser = null;
 
 
 
@@ -19,6 +20,7 @@ app.set('view engine', 'ejs');
 // 'dev' = Concise output colored by response status for development use.
 //         The :status token will be colored red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for all other codes.
 app.use(morgan('dev'));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(
   '/styles',
@@ -30,16 +32,23 @@ app.use(
 );
 app.use(express.static('public'));
 app.use(cookieParser()); // creates and populates req.cookies
+app.use((req, res, next) => {
+  console.log('Monkey fuzz');
+  console.log('req.cookies', req.cookies);
+  loggedInUser = req.cookies["user_id"];
+  next();
+});
 
 
 // Separated Routes for each Resource
 // Note: Feel free to replace the example routes below with your own
 //const userApiRoutes = require('./routes/users-api');
 // const widgetApiRoutes = require('./routes/widgets-api');
-//const usersRoutes = require('./routes/users');
+const usersRoutes = require('./routes/users');
 //const navbarApiRoutes = require('./routes/navbar-api');
 const mapsApiRoutes = require('./routes/maps-api');
 const pointsApiRoutes = require('./routes/points-api');
+const favoritesApiRoutes = require('./routes/favourites-api');
 
 
 
@@ -48,11 +57,14 @@ const pointsApiRoutes = require('./routes/points-api');
 // Note: Endpoints that return data (eg. JSON) usually start with `/api`
 //app.use('/api/database', userApiRoutes(db));
 //app.use('/api/widgets', widhes);
-//app.use('/users', usersRoutes);
+app.use('/users', usersRoutes);
 // app.use('/api/maps', navbarApiRoutes) // not sure what this route should be as it is a partial?
-app.use('/maps', mapsApiRoutes); // We can change the route (/maps) to just / once we have organized the index.ejs file
-app.use('/api/maps/:id/points/:pointid', pointsApiRoutes) // we also need /api/maps/:id/points/:pointid/edit and the DELETE point route from pointsApiRoutes, not sure how to add 2 of them
 // Note: mount other resources here, using the same pattern above
+app.use('/api/maps', mapsApiRoutes); // We can change the route (/maps) to just / once we have organized the index.ejs file
+app.use('/api/maps/points', pointsApiRoutes); // create a new point
+
+app.use('/api/users/favorites', favoritesApiRoutes);
+
 
 // Home page
 // Warning: avoid creating more routes in this file!

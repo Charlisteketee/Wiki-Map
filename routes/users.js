@@ -16,11 +16,11 @@ router.get('/', (req, res) => {
 // We don't need to spend time on user registration and login:
 // ex: localhost:8080/login/7
 router.get('/login/:user_id', (req, res) => {
-
+  console.log('req.params', req.params);
   // cookie-parser (plain text cookies)
-  res.cookie('id', req.params.id);
+  res.cookie('user_id', req.params.user_id);
 
-  //send the user somewhere (home?)
+  //send the user home
   res.redirect('/');
 });
 

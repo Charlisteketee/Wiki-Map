@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
 });
 
 // filter maps by title
-router.get('/api/maps/search', (req, res) => {
+router.get('/search', (req, res) => {
   const { title } = req.query; // this assumes the title is passed as a query parameter
 
   mapQueries.filterMapsByTitle(title)
@@ -37,7 +37,7 @@ router.get('/api/maps/search', (req, res) => {
 });
 
 // create a new map
-router.post('/api/maps', (req, res) => {
+router.post('/new', (req, res) => {
   const { title, description, location } = req.body;
   mapQueries.createMap(title, description, location)
     .then(map => {
@@ -48,8 +48,8 @@ router.post('/api/maps', (req, res) => {
     });
 });
 
-// delete a map
-router.delete('/api/maps/:mapid', (req, res) => {
+// delete a map - must be submitting delete via AJAX (could be .del rather than .delete)
+router.delete('/delete/:mapid', (req, res) => {
   const { mapId } = req.params;
 
   mapQueries.deleteMap(mapId)
