@@ -1,5 +1,3 @@
-  SELECT maps.*, COUNT(favourites.map_id) AS favourites_count
-  FROM maps
-  LEFT JOIN favourites ON maps.id = favourites.map_id
-  GROUP BY maps.id
-  ORDER BY favourites_count DESC;
+SELECT id, title, description, longitude, latitude FROM maps;
+
+SELECT map_id, latitude, longitude FROM points;
