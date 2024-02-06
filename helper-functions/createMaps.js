@@ -1,6 +1,7 @@
-const { associatePointsWithMaps} = require('./helper-functions/leafletHelperFunctions.js');
+import { associatePointsWithMaps } from './leafletHelperFunctions.js';
 const { getMapsData, getPointsData, } = require('./db/queries/database.js');
 // Function to create and render maps with padding
+console.log("test route")
 function createMaps() {
   // Fetch map data from the database
   getMapsData()

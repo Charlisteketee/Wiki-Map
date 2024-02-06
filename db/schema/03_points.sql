@@ -1,12 +1,14 @@
 DROP TABLE IF EXISTS points CASCADE;
 CREATE TABLE points (
   id SERIAL PRIMARY KEY NOT NULL,
-  --user_id INTEGER REFERENCES users(id) NOT NULL,
+  --contributor_id INTEGER REFERENCES users(id) NOT NULL,
   map_id INTEGER REFERENCES maps(id) NOT NULL,
   longitude DOUBLE PRECISION NOT NULL,
   latitude DOUBLE PRECISION NOT NULL,
   title VARCHAR(255) NOT NULL,
   body TEXT,
+  longtitude DOUBLE PRECISION(3, 6) NOT NULL,
+  latitude DOUBLE PRECISION(3, 6) NOT NULL,
   image_url VARCHAR(255) NOT NULL,
   created_at DATE NOT NULL,
   updated_at DATE NOT NULL
