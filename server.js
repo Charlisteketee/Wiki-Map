@@ -12,8 +12,6 @@ const PORT = process.env.PORT || 8080;
 const app = express();
 
 app.set('view engine', 'ejs');
-let loggedInUser = null;
-
 
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
@@ -33,12 +31,6 @@ app.use(
 app.use(express.static('public'));
 app.use(cookieParser()); // creates and populates req.cookies
 
-//middleware to show get id for every route. Could use req.params.user_id instead
-app.use((req, res, next) => {
-  console.log('req.cookies', req.cookies);
-  loggedInUser = req.cookies["user_id"];
-  next();
-});
 
 
 // Separated Routes for each Resource
@@ -48,7 +40,7 @@ app.use((req, res, next) => {
 const usersRoutes = require('./routes/users');
 //const navbarApiRoutes = require('./routes/navbar-api');
 const mapsApiRoutes = require('./routes/maps-api');
-const { getAllMaps, getMapsData, getPointsData, } = require('./db/queries/database');
+const { getAllMaps, getMapsData, getPointsData, getUsername, } = require('./db/queries/database');
 const {associatePointsWithMaps} = require('./helper-functions/leafletHelperFunctions');
 const pointsApiRoutes = require('./routes/points-api');
 const favoritesApiRoutes = require('./routes/favourites-api');
@@ -89,3 +81,5 @@ app.get('/', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
+
+// module.exports = { checkLoggedIn };

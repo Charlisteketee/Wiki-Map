@@ -72,6 +72,21 @@ const getUserId = function (userId) {
       console.log(err.message);
     });
 };
+
+const getUsername = async (userId) => {
+  try {
+    const query = 'SELECT username FROM users WHERE id = $1';
+    const result = await db.query(query, [userId]);
+    if (result.rows.length > 0) {
+      return result.rows[0].username;
+    } else {
+      throw new Error('User not found');
+    }
+  } catch (error) {
+    throw new Error('Error fetching username: ' + error.message);
+  }
+};
+
 const getMapId = function (userId, mapId) {
   return db.query('SELECT * FROM maps WHERE user_id = $1 AND id = $2;', [userId, mapId])
     .then(data => {
@@ -245,4 +260,4 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = { getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, createMap, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap };
+module.exports = { getUsername, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, createMap, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap };

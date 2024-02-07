@@ -7,6 +7,8 @@
 
 const express = require('express');
 const router  = express.Router();
+const { checkLoggedIn } = require('../helper-functions/checkLoggedIn');
+
 
 router.get('/', (req, res) => {
   res.render('users');
@@ -24,6 +26,16 @@ router.get('/login/:user_id', (req, res) => {
   //send the user home
   res.redirect('/');
 });
+
+
+// route for rendering username in navbar
+router.get('/', checkLoggedIn, (req, res) => {
+  const username = req.username;
+  console.log("username", username);
+  
+  res.render('navbar', { username });
+});
+
 
 
 module.exports = router;

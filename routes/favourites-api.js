@@ -34,6 +34,7 @@ router.get('/favourites', async (req, res) => {
   }
 });
 
+// MOVE TO MAPS-API.js
 // get one favourited map from list of users favourites
 router.get('/favourites/:mapId', async (req, res) => {
   const userId = req.cookies.user_id;
@@ -42,11 +43,9 @@ router.get('/favourites/:mapId', async (req, res) => {
   try {
     // Use Promise.all to fetch both mapsData and pointsData concurrently
     const [mapsData, pointsData] = await Promise.all([ getFavourite(userId, mapId), getPointsData()]);
-    console.log("maps data", mapsData);
     // Associate marker data with each map based on map_id or any other relevant key
     const mapsWithPoints = associatePointsWithMaps(mapsData, pointsData);
 
-    console.log("maps with points", mapsWithPoints);
     // Render the 'index' view and pass the maps data with associated points to it
     res.render('index', { mapsWithPoints });
   } catch (error) {
@@ -54,12 +53,6 @@ router.get('/favourites/:mapId', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
-
-   // Assuming getPointsData() doesn't need mapId to be passed
-
-      // Assuming you have logic to properly associate points with maps
-//  const mapsWithPoints = associatePointsWithMaps(mapsData, pointsData);
 
 
 
