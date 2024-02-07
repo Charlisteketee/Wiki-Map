@@ -65,7 +65,7 @@ app.use('/users', usersRoutes);
 app.use('/api/maps', mapsApiRoutes); // We can change the route (/api/maps) to just / once we have organized the index.ejs file
 app.use('/api/maps/points', pointsApiRoutes);
 
-app.use('/api/users/favorites', favoritesApiRoutes);
+app.use('/api/', favoritesApiRoutes);
 
 // Home page
 // Warning: avoid creating more routes in this file!
@@ -75,7 +75,6 @@ app.get('/', async (req, res) => {
   try {
     // Use Promise.all to fetch both mapsData and pointsData concurrently
     const [mapsData, pointsData] = await Promise.all([getMapsData(), getPointsData()]);
-
     // Associate marker data with each map based on map_id or any other relevant key
     const mapsWithPoints = associatePointsWithMaps(mapsData, pointsData);
 
