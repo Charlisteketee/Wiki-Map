@@ -83,7 +83,27 @@ const getMapId = function (userId, mapId) {
 };
 
 const getFavourites = function () {
-  return db.query('SELECT maps.id, maps.title, maps.description, maps.longitude, maps.latitude, (favourites.*) FROM favourites JOIN maps on map_id = maps.id WHERE favourites.user_id = 1')
+  return db.query(`
+  SELECT maps.id, maps.title, maps.description, maps.longitude, maps.latitude, (favourites.*)
+  FROM favourites JOIN maps on map_id = maps.id
+  WHERE favourites.user_id = 1`)
+    .then(data => {
+      return data.rows[0];
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
+
+// get just one favourite from list of favourites
+const getFavourite = function () {
+  return db.query(`
+  SELECT maps.id, maps.title, maps.description, maps.longitude, maps.latitude
+  FROM maps
+  JOIN favourites ON favourites.map_id = maps.id
+  WHERE favourites.user_id = 1
+  AND maps.id = 1;
+  `)
     .then(data => {
       return data.rows[0];
     })
@@ -225,4 +245,4 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = { getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, createMap, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap };
+module.exports = { getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, createMap, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap };

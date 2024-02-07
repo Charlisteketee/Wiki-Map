@@ -19,6 +19,7 @@ router.get('/login/:user_id', (req, res) => {
   console.log('req.params', req.params);
   // cookie-parser (plain text cookies)
   res.cookie('user_id', req.params.user_id);
+  // req.session.user_id = 3;
 
   //send the user home
   res.redirect('/');

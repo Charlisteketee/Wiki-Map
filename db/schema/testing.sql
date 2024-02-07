@@ -1,4 +1,5 @@
-SELECT maps.id, maps.title, maps.description, maps.longitude, maps.latitude, (favourites.*)
-FROM favourites
-JOIN maps on map_id = maps.id
-WHERE favourites.user_id = '1'
+SELECT maps.id, maps.title, maps.description, maps.longitude, maps.latitude
+FROM maps
+JOIN favourites ON favourites.map_id = maps.id
+WHERE favourites.user_id = 1
+AND maps.id = 1;
