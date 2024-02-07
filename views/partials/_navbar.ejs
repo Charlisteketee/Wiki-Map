@@ -16,17 +16,18 @@
         </div>
       </form>
     </div>
+    <div>
+      <form method="GET" action="/api/maps/createMap">
+        <button type="submit">Create a Map</button>
+      </form>
+    </div>
     <h3>Favourite Maps</h3>
     <div class="favourite-maps">
-      <form method = "POST" action = "/api/maps/:id">
-        <button type= "submit">Map #</button>
-      </form>
-      <form method = "POST" action = "/api/maps/:id">
-        <button type= "submit">Map #</button>
-      </form>
-      <form method = "POST" action = "/api/maps/:id">
-        <button type= "submit">Map #</button>
-      </form>
+      <% navBar.forEach(item => { %>
+        <form method="GET" action="/api/favourites/<%= item.map_id %>">
+          <button type="submit">Map <%= item.title %></button>
+        </form>
+      <% }); %>
     </div>
 
     <h3>Contributed Maps</h3>
