@@ -111,7 +111,19 @@ const getFavourite = function (userId, mapId) {
       console.log(err.message);
     });
 };
-
+const getFavouritesNavbar = function (userId) {
+  return db.query(`
+    SELECT favourites.map_id, maps.title
+    FROM favourites
+    JOIN maps ON favourites.map_id = maps.id
+    WHERE favourites.user_id = $1`, [userId])
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
 const updatePoint = function (pointObject) {
   const queryParams = [
     points.body,
@@ -245,4 +257,4 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = { getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, createMap, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap };
+module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap };

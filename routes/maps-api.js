@@ -7,13 +7,13 @@
 
 const express = require('express');
 const router  = express.Router();
-const mapQueries = require('../db/queries/database');
+const db = require('../db/queries/database');
 
 // Routes append /api/maps
 
 // get all maps
 router.get('/', (req, res) => {
-  mapQueries.getAllMaps()
+  db.getAllMaps()
     .then(maps => {
       res.json({ maps });
     })
@@ -28,7 +28,7 @@ router.get('/', (req, res) => {
 router.get('/search', (req, res) => {
   const { title } = req.query; // this assumes the title is passed as a query parameter
 
-  mapQueries.filterMapsByTitle(title)
+  db.filterMapsByTitle(title)
     .then(maps => {
       res.json({ maps });
     })
@@ -38,22 +38,22 @@ router.get('/search', (req, res) => {
 });
 
 // create a new map
-router.post('/new', (req, res) => {
-  const { title, description, location } = req.body;
-  mapQueries.createMap(title, description, location)
-    .then(map => {
-      res.json({ map });
-    })
-    .catch(err => {
-      res.status(500).json({ error: err.message });
-    });
+router.get('/createMap', async (req, res) => {
+  try {
+    const navBar = await db.getFavouritesNavbar(1);
+    res.render('createMap', { navBar });
+  } catch (error) {
+    console.error('An error occurred:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
+
 
 // delete a map - must be submitting delete via AJAX (could be .del rather than .delete)
 router.delete('/delete/:mapid', (req, res) => {
   const { mapId } = req.params;
 
-  mapQueries.deleteMap(mapId)
+  db.deleteMap(mapId)
     .then(deleted => {
       if (deleted) {
         res.json({ message: 'Map successfully deleted' });

@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 const usersRoutes = require('./routes/users');
 //const navbarApiRoutes = require('./routes/navbar-api');
 const mapsApiRoutes = require('./routes/maps-api');
-const { getAllMaps, getMapsData, getPointsData, } = require('./db/queries/database');
+const { getAllMaps, getMapsData, getPointsData, getFavouritesNavbar } = require('./db/queries/database');
 const {associatePointsWithMaps} = require('./helper-functions/leafletHelperFunctions');
 const pointsApiRoutes = require('./routes/points-api');
 const favoritesApiRoutes = require('./routes/favourites-api');
@@ -64,7 +64,6 @@ app.use('/users', usersRoutes);
 // Note: mount other resources here, using the same pattern above
 app.use('/api/maps', mapsApiRoutes); // We can change the route (/api/maps) to just / once we have organized the index.ejs file
 app.use('/api/maps/points', pointsApiRoutes);
-
 app.use('/api/', favoritesApiRoutes);
 
 // Home page
@@ -77,9 +76,9 @@ app.get('/', async (req, res) => {
     const [mapsData, pointsData] = await Promise.all([getMapsData(), getPointsData()]);
     // Associate marker data with each map based on map_id or any other relevant key
     const mapsWithPoints = associatePointsWithMaps(mapsData, pointsData);
-
+    const navBar = await getFavouritesNavbar(1);
     // Render the 'index' view and pass the maps data with associated points to it
-    res.render('index', { mapsWithPoints });
+    res.render('index', { mapsWithPoints, navBar});
   } catch (error) {
     console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');
