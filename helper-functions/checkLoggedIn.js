@@ -1,7 +1,7 @@
 const { getUsername } = require('../db/queries/database');
 
 
-//middleware to check if user is logged in and fetch the username
+// to check if user is logged in and fetch the username
 const checkLoggedIn = (req, res, next) => {
   userId = req.cookies.user_id;
 
