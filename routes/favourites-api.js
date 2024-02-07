@@ -6,7 +6,7 @@
  */
 const express = require('express');
 const router  = express.Router();
-const {getFavouritesNavbar, getFavourites, getPointsData, getFavourite} = require('../db/queries/database'); //inside database.js
+const {getFavouritesNavbar, getFavourites, getPointsData, getFavourite } = require('../db/queries/database'); //inside database.js
 const{associatePointsWithMaps} = require ('../helper-functions/leafletHelperFunctions')
 // router.get('/api/users/:userId/favorites', (req, res) => {
 //   const { userId } = req.params;
@@ -34,36 +34,27 @@ router.get('/favourites', async (req, res) => {
   }
 });
 
+// MOVE TO MAPS-API.js
 router.get('/favourites/:mapId', async (req, res) => {
   try {
     const userId = 1; // For demonstration purposes; replace this with the actual user ID retrieval logic
     const mapId = req.params.mapId;
 
-    // Fetch data for the specific favourite map
-    const [mapsData, pointsData] = await Promise.all([
-      getFavourite(userId, mapId),
-      getPointsData()
-    ]);
-
-    // Associate marker data with the favourite map
+  try {
+    // Use Promise.all to fetch both mapsData and pointsData concurrently
+    const [mapsData, pointsData] = await Promise.all([ getFavourite(userId, mapId), getPointsData()]);
+    console.log("maps data", mapsData);
+    // Associate marker data with each map based on map_id or any other relevant key
     const mapsWithPoints = associatePointsWithMaps(mapsData, pointsData);
 
-    // Fetch navbar data
-    const navBar = await getFavouritesNavbar(userId);
-
-    // Render the 'index' view with the maps data and navbar data
-    res.render('index', { mapsWithPoints, navBar });
+    console.log("maps with points", mapsWithPoints);
+    // Render the 'index' view and pass the maps data with associated points to it
+    res.render('index', { mapsWithPoints });
   } catch (error) {
     console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');
   }
 });
-
-
-   // Assuming getPointsData() doesn't need mapId to be passed
-
-      // Assuming you have logic to properly associate points with maps
-//  const mapsWithPoints = associatePointsWithMaps(mapsData, pointsData);
 
 
 
