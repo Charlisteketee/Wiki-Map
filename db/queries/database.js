@@ -88,7 +88,7 @@ const getFavourites = function () {
   FROM favourites JOIN maps on map_id = maps.id
   WHERE favourites.user_id = 1`)
     .then(data => {
-      return data.rows[0];
+      return data.rows;
     })
     .catch((err) => {
       console.log(err.message);
@@ -96,16 +96,16 @@ const getFavourites = function () {
 };
 
 // get just one favourite from list of favourites
-const getFavourite = function () {
+const getFavourite = function (userId, mapId) {
   return db.query(`
   SELECT maps.id, maps.title, maps.description, maps.longitude, maps.latitude
   FROM maps
   JOIN favourites ON favourites.map_id = maps.id
-  WHERE favourites.user_id = 1
-  AND maps.id = 1;
-  `)
+  WHERE favourites.user_id = $1
+  AND maps.id = $2;
+  `, [userId, mapId])
     .then(data => {
-      return data.rows[0];
+      return data.rows;
     })
     .catch((err) => {
       console.log(err.message);

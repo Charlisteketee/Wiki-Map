@@ -67,9 +67,11 @@ const db = require('../db/queries/database');
 // Associate marker data with maps based on map_id
 function associatePointsWithMaps(mapsData, pointsData) {
   const mapsWithPoints = [];
+  console.log("map", mapsData);
 
   for (let i = 0; i < mapsData.length; i++) {
     const map = mapsData[i];
+
     const associatedPoints = [];
 
     for (let j = 0; j < pointsData.length; j++) {
