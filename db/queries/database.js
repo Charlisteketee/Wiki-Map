@@ -1,6 +1,5 @@
 // lets do all database queries here.
 const db = require('../connection');
-const generateUniqueRandomNumber = require (`../../helper-functions/generateRandomNumber`)
 //get user id function LOW PRIORITY. CREATOR ID
 // insert point function -Paul
 // delete map function -Luiza
@@ -172,7 +171,6 @@ const createMap = function (mapObject) {
       console.error(err.message)
     })
 };
-generateUniqueRandomNumber('maps', 'map_id')
 
 // query filter by title for search bar. - Charli
 const filterMapsByTitle = function (title) {
