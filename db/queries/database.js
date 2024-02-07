@@ -1,6 +1,6 @@
 // lets do all database queries here.
 const db = require('../connection');
-const generateUniqueRandomNumber = require (`../../helper-functions/generateRandomNumber`)
+
 //get user id function LOW PRIORITY. CREATOR ID
 // insert point function -Paul
 // delete map function -Luiza
