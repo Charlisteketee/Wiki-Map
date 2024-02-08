@@ -25,7 +25,7 @@ router.get('/favourites', async (req, res) => {
     const [mapsData, pointsData] = await Promise.all([getFavourites(), getPointsData()]);
     // Associate marker data with each map based on map_id or any other relevant key
     const mapsWithPoints = associatePointsWithMaps(mapsData, pointsData);
-    const navBar = await getFavouritesNavbar(1)
+    const navBar = await getFavouritesNavbar(req.cookies.userId);
     // Render the 'index' view and pass the maps data with associated points to it
     res.render('index', { mapsWithPoints, navBar });
   } catch (error) {
@@ -37,7 +37,7 @@ router.get('/favourites', async (req, res) => {
 // MOVE TO MAPS-API.js
 router.get('/favourites/:mapId', async (req, res) => {
   try {
-    const userId = 1; // For demonstration purposes; replace this with the actual user ID retrieval logic
+    const userId = req.cookies.userId; // For demonstration purposes; replace this with the actual user ID retrieval logic
     const mapId = req.params.mapId;
 
     // Fetch data for the specific favourite map
@@ -58,10 +58,6 @@ router.get('/favourites/:mapId', async (req, res) => {
     console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');
   }
-} catch (error) {
-  console.error('An error occurred:', error);
-  res.status(500).send('Internal Server Error');
-}
 });
 
 

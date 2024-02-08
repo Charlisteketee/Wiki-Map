@@ -74,8 +74,7 @@ const getUserId = function (userId) {
 };
 
 const getUser = (userId) => {
-  const queryString = 'SELECT * FROM users WHERE id = $1;';
-  return db.query(queryString, [userId])
+  return db.query('SELECT * FROM users WHERE id = $1;', [userId])
   .then(data => {
     return data.rows[0];
   })
