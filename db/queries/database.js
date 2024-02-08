@@ -286,4 +286,4 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap };
+module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap, getContributedMaps };
