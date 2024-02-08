@@ -15,9 +15,7 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
   <script src="/vendor/jquery-3.0.0.js"></script>
-  <script defer src="/scripts/app.js"></script>
   <style>
-    /* Set a specific height for the map container */
     #map {
       width: 800px;
       height: 600px;
@@ -27,66 +25,68 @@
 <body>
   <%- include('partials/_navbar') %>
   <main class="maps">
-    <!-- Container for Maps -->
     <h1>Draw and Create a New Map</h1>
-    <!-- Map Container -->
     <div id="map"></div>
-    <!-- Button to Create New Map -->
     <button id="createNewMap">Create New Map</button>
-    <!-- Coordinates Display -->
     <div id="coordinates"></div>
     <script>
-      // Create the map
-      var map = L.map('map').setView([0, 0], 2); // Default view super zoomed out
-      // Define the tile layer
+      var map = L.map('map').setView([0, 0], 2);
       L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
         maxZoom: 20,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+        attribution: '&copy; ...'
       }).addTo(map);
-      // Enable drawing tools (Polygon, Rectangle, etc.) on the map
+
       var drawnItems = new L.FeatureGroup();
       map.addLayer(drawnItems);
+
       var drawControl = new L.Control.Draw({
         edit: {
           featureGroup: drawnItems
         }
       });
       map.addControl(drawControl);
-      // Handle when a user draws a shape (e.g., polygon) on the map
-      map.on('draw:created', function (e) {
-        var layer = e.layer;
+
+      map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
         drawnItems.addLayer(layer);
-        // Get the coordinates of the drawn shape
-        var coordinates = layer.toGeoJSON().geometry.coordinates;
-        displayCoordinates(coordinates);
       });
-      // Function to display coordinates
-      function displayCoordinates(coordinates) {
-        document.getElementById('coordinates').innerHTML = 'Coordinates: ' + JSON.stringify(coordinates);
-      }
-      // Event listener for the "Create New Map" button
-      document.getElementById('createNewMap').addEventListener('click', function () {
-        var coordinates = drawnItems.toGeoJSON().geometry.coordinates;
-        // Create a new map using the drawn coordinates (customize as needed)
-        createNewMap(coordinates);
+
+      document.getElementById('createNewMap').addEventListener('click', function (e) {
+        e.preventDefault();
+        var bounds = drawnItems.getBounds();
+        var center = bounds.getCenter();
+
+        var mapData = {
+          // Note: Ensure user_id is securely fetched from server or session
+          title: "User's Map Title",
+          description: "A brief description of the map",
+          longitude: center.lng,
+          latitude: center.lat,
+          points: drawnItems.toGeoJSON().features.map(feature => ({
+            longitude: feature.geometry.coordinates[0],
+            latitude: feature.geometry.coordinates[1],
+            title: "Dynamic Point Title",
+            body: "Dynamic Description",
+            image_url: "Dynamic URL"
+          }))
+        };
+
+        console.log(mapData);
+        $.ajax({
+          url: '/api/create-map/save-map',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(mapData),
+          success: function(response) {
+            console.log('Map saved:', response);
+            // Implement success feedback
+          },
+          error: function(xhr, status, error) {
+            console.error('Error:', error);
+            // Implement error feedback
+          }
+        });
       });
-      // Function to create a new map based on coordinates (customize as needed)
-      function createNewMap(coordinates) {
-        // Add your code here to create a new map using the retrieved coordinates
-        // You can use the Leaflet library to create a new map, set markers, and customize the map as desired.
-        // Here's a basic example:
-        // Create a new map centered around the first coordinate point
-        var newMap = L.map('new-map').setView(coordinates[0][0], 12);
-        // Define the tile layer for the new map
-        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-          maxZoom: 20,
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
-        }).addTo(newMap);
-        // Add markers or shapes to the new map based on the retrieved coordinates
-        // Customize the new map as needed
-        // You can append the new map to a div element in your existing page
-        document.getElementById('new-map-container').appendChild(newMap.getContainer());
-      }
     </script>
   </main>
 </body>
