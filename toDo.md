@@ -7,9 +7,11 @@
   - remove map from database []
   - add point to existing map in database []
   - delete point from existing map in database []
-  - search a map
+- log out button []
 # HTML
 - add description tags []
+- remove search bar []
+- on map click, redirect to map []
 
 # AJAX??
 - add hover/ click on point to show description []

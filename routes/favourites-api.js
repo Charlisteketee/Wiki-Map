@@ -36,10 +36,9 @@ router.get('/favourites', async (req, res) => {
 
 // MOVE TO MAPS-API.js
 router.get('/favourites/:mapId', async (req, res) => {
+  const userId = req.cookies.user_id;
+  const mapId = req.params.mapId;
   try {
-    const userId = req.cookies.userId; // For demonstration purposes; replace this with the actual user ID retrieval logic
-    const mapId = req.params.mapId;
-
     // Fetch data for the specific favourite map
     const [mapsData, pointsData] = await Promise.all([
       getFavourite(userId, mapId),

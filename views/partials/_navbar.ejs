@@ -30,7 +30,7 @@
     <div class="favourite-maps">
       <% navBar.forEach(item => { %>
         <form method="GET" action="/api/favourites/<%= item.map_id %>">
-          <button type="submit">Map <%= item.title %></button>
+          <button type="submit"><%= item.title %></button>
         </form>
       <% }); %>
     </div>
