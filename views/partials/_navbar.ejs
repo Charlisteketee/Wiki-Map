@@ -33,15 +33,11 @@
 
     <h3>Contributed Maps</h3>
     <div class="contributed-maps">
-      <form method = "POST" action = "/api/maps/:id">
-        <button type= "submit">Map #</button>
-      </form>
-      <form method = "POST" action = "/api/maps/:id">
-        <button type= "submit">Map #</button>
-      </form>
-      <form method = "POST" action = "/api/maps/:id">
-        <button type= "submit">Map #</button>
-      </form>
+      <% navBar.forEach(item => { %>
+        <form method="GET" action="/api/contributed/<%= item.id %>">
+          <button type="submit">Map <% item.title %></button>
+        </form>
+      <% }); %>
     </div>
     <div>
       <form method = "POST" action = "/logout">
