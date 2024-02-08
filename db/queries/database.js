@@ -73,19 +73,17 @@ const getUserId = function (userId) {
     });
 };
 
-const getUsername = async (userId) => {
-  try {
-    const query = 'SELECT username FROM users WHERE id = $1';
-    const result = await db.query(query, [userId]);
-    if (result.rows.length > 0) {
-      return result.rows[0].username;
-    } else {
-      throw new Error('User not found');
-    }
-  } catch (error) {
-    throw new Error('Error fetching username: ' + error.message);
-  }
+const getUser = (userId) => {
+  const queryString = 'SELECT * FROM users WHERE id = $1;';
+  return db.query(queryString, [userId])
+  .then(data => {
+    return data.rows[0];
+  })
+  .catch((err) => {
+    console.log(err.message);
+  });
 };
+
 
 const getMapId = function (userId, mapId) {
   return db.query('SELECT * FROM maps WHERE user_id = $1 AND id = $2;', [userId, mapId])
@@ -314,4 +312,6 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap, getContributedMaps, getContributedNavbar, getContributed };
+
+module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap, getContributedMaps, getContributedNavbar, getContributed, getUser };
+

@@ -2,16 +2,20 @@
 require('dotenv').config();
 
 // Web server config
+const cookieParser = require("cookie-parser");
+
 const sassMiddleware = require('./lib/sass-middleware');
 const express = require('express');
 const morgan = require('morgan');
-const cookieParser = require("cookie-parser");
+const { checkLoggedIn } = require('./helper-functions/checkLoggedIn');
+
 
 
 const PORT = process.env.PORT || 8080;
 const app = express();
 
 app.set('view engine', 'ejs');
+// let loggedInUser = null;
 
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
@@ -19,6 +23,9 @@ app.set('view engine', 'ejs');
 //         The :status token will be colored red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for all other codes.
 app.use(morgan('dev'));
 
+app.use(cookieParser()); // creates and populates req.cookies
+
+app.use(checkLoggedIn);
 app.use(express.urlencoded({ extended: true }));
 app.use(
   '/styles',
@@ -29,7 +36,6 @@ app.use(
   })
 );
 app.use(express.static('public'));
-app.use(cookieParser()); // creates and populates req.cookies
 
 
 
