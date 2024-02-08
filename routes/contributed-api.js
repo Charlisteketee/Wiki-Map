@@ -31,11 +31,12 @@ router.get('/contributed/:mapId', async(req, res) => {
     const userId = 1; //For demonstration purposes. Replace with actual user
     const mapId = req.params.mapId;
 
-    const [mapsData, pointsData] = await Promise.all([getContributed(userId, mapId), getPointsData()]);
-
+    const [mapsData, pointsData] = await Promise.all([
+      db.getFavourite(userId, mapId),
+      db.getPointsData()
+    ]);
     // Associate marker data with each map
-    const mapsWithPoints = associatePointsWithMaps(mapsData, pointsData);
-
+    const mapsWithPoints = leaflet.associatePointsWithMaps(mapsData, pointsData);
     const navBar = await getContributedNavbar(userId);
 
     // Render the 'index' view and pass the maps data with associated points to it

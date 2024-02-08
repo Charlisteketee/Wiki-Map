@@ -93,20 +93,6 @@ const getMapId = function (userId, mapId) {
       console.log(err.message);
     });
 };
-
-const getFavourites = function () {
-  return db.query(`
-  SELECT maps.id, maps.title, maps.description, maps.longitude, maps.latitude, (favourites.*)
-  FROM favourites JOIN maps on map_id = maps.id
-  WHERE favourites.user_id = 1`)
-    .then(data => {
-      return data.rows;
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-};
-
 // get just one favourite from list of favourites
 const getFavourite = function (userId, mapId) {
   return db.query(`
@@ -123,12 +109,41 @@ const getFavourite = function (userId, mapId) {
       console.log(err.message);
     });
 };
+// queries all favourites to display for a specific user, lists on navbar
 const getFavouritesNavbar = function (userId) {
   return db.query(`
     SELECT favourites.map_id, maps.title
     FROM favourites
     JOIN maps ON favourites.map_id = maps.id
     WHERE favourites.user_id = $1`, [userId])
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
+//Contributed maps helper functions
+const getContributedNavbar = function(userId) {
+  return db.query(`
+    SELECT id, title
+    FROM maps
+    WHERE user_id = $1`, [userId])
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
+
+const getContributed = function(userId, mapId) {
+  return db.query(`
+  SELECT id, title, description, longitude, latitude
+  FROM maps
+  WHERE user_id = $1
+  AND id = $2;
+  `, [userId, mapId])
     .then(data => {
       return data.rows;
     })
@@ -235,48 +250,6 @@ const filterMapsByTitle = function (title) {
     });
 };
 
-//Contributed maps helper functions
-const getContributedMaps = function(userId) {
-  return db.query(`
-  SELECT maps.*
-  FROM maps
-  WHERE user_id = $1`, [userId])
-    .then(data => {
-      return data.rows;
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-};
-
-const getContributedNavbar = function(userId) {
-  return db.query(`
-    SELECT id, title
-    FROM maps
-    WHERE user_id = $1`, [userId])
-    .then(data => {
-      return data.rows;
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-};
-
-const getContributed = function(userId, mapId) {
-  return db.query(`
-  SELECT id, title, description, longitude, latitude
-  FROM maps
-  WHERE user_id = $1
-  AND id = $2;
-  `, [userId, mapId])
-    .then(data => {
-      return data.rows;
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-};
-
 const deleteMap = function (mapId) {
   return db.query('DELETE FROM maps WHERE id = $1', [mapId])
   .then(result => {
@@ -312,5 +285,5 @@ const deletePoint = function (pointId) {
 };
 
 
-module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap, getContributedMaps, getContributedNavbar, getContributed, getUser };
+module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, filterMapsByTitle, deleteMap, getContributedNavbar, getContributed, getUser };
 
