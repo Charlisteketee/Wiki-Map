@@ -54,6 +54,10 @@ router.get('/favourites/:mapId', async (req, res) => {
     console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');
   }
+} catch (error) {
+  console.error('An error occurred:', error);
+  res.status(500).send('Internal Server Error');
+}
 });
 
 

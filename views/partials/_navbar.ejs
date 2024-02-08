@@ -5,7 +5,11 @@
   <span class="logo">Wiki Maps</span>
   <div><img src="/images/profile-hex.png"></div>
   <h2>Username</h2>
-
+  <% if (typeof(username) !== 'undefined') { %>
+    <p>Logged in as <%= username %></p>
+  <% } else { %>
+    <p>Not logged in</p>
+  <% } %>
   <section class="user-options">
     <h3>Search</h3>
     <div>
