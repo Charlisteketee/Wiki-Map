@@ -236,6 +236,48 @@ const filterMapsByTitle = function (title) {
     });
 };
 
+//Contributed maps helper functions
+const getContributedMaps = function(userId) {
+  return db.query(`
+  SELECT maps.*
+  FROM maps
+  WHERE user_id = $1`, [userId])
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
+
+const getContributedNavbar = function(userId) {
+  return db.query(`
+    SELECT id, title
+    FROM maps
+    WHERE user_id = $1`, [userId])
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
+
+const getContributed = function(userId, mapId) {
+  return db.query(`
+  SELECT id, title, description, longitude, latitude
+  FROM maps
+  WHERE user_id = $1
+  AND id = $2;
+  `, [userId, mapId])
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
+
 const deleteMap = function (mapId) {
   return db.query('DELETE FROM maps WHERE id = $1', [mapId])
   .then(result => {
@@ -270,4 +312,6 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap, getUser };
+
+module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap, getContributedMaps, getContributedNavbar, getContributed, getUser };
+
