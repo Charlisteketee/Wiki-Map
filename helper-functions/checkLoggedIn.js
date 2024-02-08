@@ -1,16 +1,16 @@
-const { getUsername } = require('../db/queries/database');
+const { getUser } = require('../db/queries/database');
 
 
 // to check if user is logged in and fetch the username
 const checkLoggedIn = (req, res, next) => {
   userId = req.cookies.user_id;
-
+  console.log("userId", userId);
   if (userId) {
     console.log('req.cookies', userId);
 
-    getUsername (userId)
-    .then(username => {
-      req.username = username;
+    getUser(userId)
+    .then(user => {
+      req.username = user.username;
       next();
     })
     .catch(error => {
