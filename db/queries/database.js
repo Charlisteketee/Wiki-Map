@@ -238,12 +238,25 @@ const filterMapsByTitle = function (title) {
     });
 };
 
-//Contributed maps helper function
+//Contributed maps helper functions
 const getContributedMaps = function(userId) {
   return db.query(`
   SELECT maps.*
   FROM maps
   WHERE user_id = $1`, [userId])
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
+
+const getContributedNavbar = function(userId) {
+  return db.query(`
+    SELECT id, title
+    FROM maps
+    WHERE user_id = $1`, [userId])
     .then(data => {
       return data.rows;
     })
@@ -286,4 +299,4 @@ const deletePoint = function (pointId) {
   });
 };
 
-module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap, getContributedMaps };
+module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, getFavourites, filterMapsByTitle, deleteMap, getContributedMaps, getContributedNavbar };
