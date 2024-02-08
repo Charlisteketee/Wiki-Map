@@ -238,6 +238,20 @@ const filterMapsByTitle = function (title) {
     });
 };
 
+//Contributed maps helper function
+const getContributedMaps = function(userId) {
+  return db.query(`
+  SELECT maps.*
+  FROM maps
+  WHERE user_id = $1`, [userId])
+    .then(data => {
+      return data.rows;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+};
+
 const deleteMap = function (mapId) {
   return db.query('DELETE FROM maps WHERE id = $1', [mapId])
   .then(result => {
