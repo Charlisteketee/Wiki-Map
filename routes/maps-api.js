@@ -51,8 +51,11 @@ router.get('/:mapId', async (req, res) => {
     // Associate marker data with the map
     const mapsWithPoints = leaflet.associatePointsWithMaps(mapData, pointsData);
 
-    // Render the index view with the map data
-    res.render('singleMap', { mapsWithPoints });
+    // Fetch navbar data
+    const contributedNavBar = await db.getContributedNavbar(userId);
+    const favouritesNavBar = await db.getFavouritesNavbar(userId);
+    // Render the 'index' view with the maps data and navbar data
+    res.render('singleMap', { mapsWithPoints, contributedNavBar, favouritesNavBar });
   } catch (error) {
     console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');
