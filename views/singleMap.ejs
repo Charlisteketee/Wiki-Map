@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+  <style>
+    .map-container {
+      width: 800px;
+      height: 600px;
+      margin: 20px auto;
+    }
+    .like-button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<header>
+  <h1>Wiki Maps</h1>
+  <%- include('partials/_navbar') %>
+</header>
+<body>
+  <main class="maps">
+    <div id="maps-container"></div>
+  </main>
+  <script>
+    const mapsWithPoints = <%- JSON.stringify(mapsWithPoints) %>;
+
+    function createMaps() {
+      var mapsContainer = document.getElementById('maps-container');
+
+      mapsWithPoints.forEach(function (mapData, index) {
+        var mapDiv = document.createElement('div');
+        mapDiv.className = 'map-container';
+        mapDiv.id = 'map-' + index;
+        mapsContainer.appendChild(mapDiv);
+
+        var map = L.map('map-' + index).setView([mapData.latitude, mapData.longitude], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {}).addTo(map);
+        mapData.markers.forEach(function (marker) {
+          L.marker([marker.latitude, marker.longitude]).addTo(map);
+        });
+
+        // Initialize drawing tools for this map
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+        var drawControl = new L.Control.Draw({
+          edit: {
+            featureGroup: drawnItems,
+          },
+        });
+        map.addControl(drawControl);
+
+        // Handle draw events
+        map.on(L.Draw.Event.CREATED, function (event) {
+          var layer = event.layer;
+          drawnItems.addLayer(layer);
+          // Example: Process the drawing here, e.g., save to server
+        });
+        var group = new L.featureGroup(mapData.markers.map(marker => L.marker([marker.latitude, marker.longitude])));
+          map.fitBounds(group.getBounds().pad(0.2));
+
+        var likeButton = document.createElement('button');
+        likeButton.className = 'like-button';
+        likeButton.textContent = 'Like';
+        likeButton.onclick = function() {
+          console.log('Liked map ' + mapData.id); // Example action
+        };
+        mapDiv.appendChild(likeButton);
+      });
+    }
+
+    createMaps(mapsWithPoints);
+  </script>
+</body>
+</html>
