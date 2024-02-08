@@ -47,6 +47,16 @@
           containerDiv.className = 'map-and-button-container';
           mapsContainer.appendChild(containerDiv);
 
+          // Create a title div and display the title
+          var titleDiv = document.createElement('div');
+          titleDiv.textContent = mapData.title;
+          containerDiv.appendChild(titleDiv);
+
+          // Create a description div and display the description
+          var descriptionDiv = document.createElement('div');
+          descriptionDiv.textContent = mapData.description;
+          containerDiv.appendChild(descriptionDiv);
+
           // Create a map container div
           var mapDiv = document.createElement('div');
           mapDiv.className = 'map-container';
@@ -75,4 +85,3 @@
     </script>
 </body>
 </html>
-
