@@ -47,10 +47,17 @@
           containerDiv.className = 'map-and-button-container';
           mapsContainer.appendChild(containerDiv);
 
-          // Create a title div and display the title
-          var titleDiv = document.createElement('div');
-          titleDiv.textContent = mapData.title;
-          containerDiv.appendChild(titleDiv);
+          // Create a button for the map title
+          var titleButton = document.createElement('button');
+          titleButton.textContent = mapData.title;
+          titleButton.className = 'map-title-button';
+          containerDiv.appendChild(titleButton);
+
+          // Add an event listener to the title button
+          titleButton.addEventListener('click', function() {
+              // Redirect to the route for displaying a single map
+              window.location.href = '/api/maps/' + mapData.id;
+          });
 
           // Create a description div and display the description
           var descriptionDiv = document.createElement('div');
