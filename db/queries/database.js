@@ -84,10 +84,13 @@ const getUser = (userId) => {
 };
 
 
-const getMapId = function (userId, mapId) {
-  return db.query('SELECT * FROM maps WHERE user_id = $1 AND id = $2;', [userId, mapId])
+const getMap = function (userId) {
+  return db.query(`
+  SELECT maps.id, maps.title, maps.description, maps.longitude, maps.latitude
+  FROM maps
+  WHERE maps.id = $1;`, [userId])
     .then(data => {
-      return data.rows[0];
+      return data.rows;
     })
     .catch((err) => {
       console.log(err.message);
@@ -290,5 +293,5 @@ const deletePoint = function (pointId) {
 };
 
 
-module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMapId, getAllMapLocations, updatePoint, createPoint, deletePoint, filterMapsByTitle, deleteMap, getContributedNavbar, getContributed, getUser };
+module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMap, getAllMapLocations, updatePoint, createPoint, deletePoint, filterMapsByTitle, deleteMap, getContributedNavbar, getContributed, getUser };
 

@@ -45,7 +45,7 @@ router.get('/favourites/:mapId', async (req, res) => {
 
     // Fetch data for the specific favourite map
     const [mapsData, pointsData] = await Promise.all([
-      db.getFavourite(userId, mapId),
+      db.getMap(mapId),
       db.getPointsData()
     ]);
 
@@ -56,7 +56,7 @@ router.get('/favourites/:mapId', async (req, res) => {
     const contributedNavBar = await db.getContributedNavbar(userId);
     const favouritesNavBar = await db.getFavouritesNavbar(userId);
     // Render the 'index' view with the maps data and navbar data
-    res.render('index', { mapsWithPoints, contributedNavBar, favouritesNavBar });
+    res.render('singleMap', { mapsWithPoints, contributedNavBar, favouritesNavBar });
   } catch (error) {
     console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');
@@ -69,7 +69,7 @@ router.get('/contributed/:mapId', async(req, res) => {
   try {
 
     const [mapsData, pointsData] = await Promise.all([
-      db.getContributed(mapId),
+      db.getMap(userId),
       db.getPointsData()
     ]);
     // Associate marker data with each map
@@ -78,7 +78,7 @@ router.get('/contributed/:mapId', async(req, res) => {
     const favouritesNavBar = await db.getFavouritesNavbar(userId);
 
     // Render the 'index' view and pass the maps data with associated points to it
-    res.render('index', {mapsWithPoints, contributedNavBar, favouritesNavBar});
+    res.render('singleMap', {mapsWithPoints, contributedNavBar, favouritesNavBar});
   } catch (error) {
     console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');
