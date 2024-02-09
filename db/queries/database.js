@@ -291,9 +291,17 @@ const deletePoint = function (pointId) {
     throw error;
   });
 };
-const addToFavorites = function (userId, mapId) {
-  return db.query('INSERT INTO favourites (user_id, map_id) VALUES ($1, $2)', [userId, mapId]);
+const addToFavourites = async function (userId, mapId) {
+  //check if the user has already liked the map
+  const existingFavourite = await db.query('SELECT * FROM favourites WHERE user_id = $1 AND map_id = $2', [userId, mapId]);
+
+  // if the user has already liked it, return without adding it in again
+  if (existingFavourite.rows.length > 0) {
+    console.log('Map is already in favourites.');
+    return;
+  }
+  await db.query('INSERT INTO favourites (user_id, map_id) VALUES ($1, $2)', [userId, mapId]);
 };
 
-module.exports = { addToFavorites, getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMap, getAllMapLocations, updatePoint, createPoint, deletePoint, filterMapsByTitle, deleteMap, getContributedNavbar, getContributed, getUser };
+module.exports = { addToFavourites, getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMap, getAllMapLocations, updatePoint, createPoint, deletePoint, filterMapsByTitle, deleteMap, getContributedNavbar, getContributed, getUser };
 

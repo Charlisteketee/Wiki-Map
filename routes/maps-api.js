@@ -22,7 +22,7 @@ router.post('/like/:mapId', async (req, res) => {
 
   try {
     // call the function to add the map to favorites
-    await db.addToFavorites(userId, mapId);
+    await db.addToFavourites(userId, mapId);
     res.sendStatus(200); // success!
   } catch (error) {
     console.error('An error occurred:', error);
