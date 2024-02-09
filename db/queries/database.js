@@ -126,30 +126,32 @@ const getFavouritesNavbar = function (userId) {
 //Contributed maps helper functions
 const getContributedNavbar = function(userId) {
   return db.query(`
-    SELECT id, title
+    SELECT DISTINCT ON (maps.id) maps.id as map_id, maps.title
     FROM maps
-    WHERE user_id = $1`, [userId])
-    .then(data => {
-      return data.rows;
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+    JOIN points ON points.map_id = maps.id
+    WHERE points.contributor_id = $1
+    ORDER BY maps.id, maps.created_at DESC;
+  `, [userId])
+  .then(data => {
+    return data.rows;
+  })
+  .catch((err) => {
+    console.log(err.message);
+  });
 };
 
-const getContributed = function(userId, mapId) {
+const getContributed = function(mapId) {
   return db.query(`
-  SELECT id, title, description, longitude, latitude
-  FROM maps
-  WHERE user_id = $1
-  AND id = $2;
-  `, [userId, mapId])
-    .then(data => {
-      return data.rows;
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+    SELECT maps.id, maps.title, maps.description, maps.longitude, maps.latitude
+    FROM maps
+    WHERE maps.id = $1;
+    `, [mapId])
+      .then(data => {
+        return data.rows;
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
 };
 const updatePoint = function (pointObject) {
   const queryParams = [

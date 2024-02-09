@@ -28,18 +28,18 @@
     </div>
     <h3>Favourite Maps</h3>
     <div class="favourite-maps">
-      <% navBar.forEach(item => { %>
+      <% favouritesNavBar.forEach(item => { %>
         <form method="GET" action="/api/maps/favourites/<%= item.map_id %>">
-          <button type="submit">Map <%= item.title %></button>
+          <button type="submit"><%= item.title %></button>
         </form>
       <% }); %>
     </div>
 
     <h3>Contributed Maps</h3>
     <div class="contributed-maps">
-      <% navBar.forEach(item => { %>
+      <% contributedNavBar.forEach(item => { %>
         <form method="GET" action="/api/maps/contributed/<%= item.map_id %>">
-          <button type="submit">Map <% item.title %></button>
+          <button type="submit"><%= item.title %></button>
         </form>
       <% }); %>
     </div>

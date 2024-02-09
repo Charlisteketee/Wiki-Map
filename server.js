@@ -46,8 +46,8 @@ app.use(express.static('public'));
 const usersRoutes = require('./routes/users');
 //const navbarApiRoutes = require('./routes/navbar-api');
 const mapsApiRoutes = require('./routes/maps-api');
-const { getAllMaps, getMapsData, getPointsData, getFavouritesNavbar } = require('./db/queries/database');
-const {associatePointsWithMaps} = require('./helper-functions/leafletHelperFunctions');
+const db = require('./db/queries/database');
+const leaflet = require('./helper-functions/leafletHelperFunctions');
 const pointsApiRoutes = require('./routes/points-api');
 
 
@@ -67,14 +67,16 @@ app.use('/api/maps/points', pointsApiRoutes);
 // Separate them into separate routes files (see above).
 
 app.get('/', async (req, res) => {
+  const userId = req.cookies.user_id; // For demonstration purposes; replace this with the actual user ID retrieval logic
   try {
     // Use Promise.all to fetch both mapsData and pointsData concurrently
-    const [mapsData, pointsData] = await Promise.all([getMapsData(), getPointsData()]);
+    const [mapsData, pointsData] = await Promise.all([db.getMapsData(), db.getPointsData()]);
     // Associate marker data with each map based on map_id or any other relevant key
-    const mapsWithPoints = associatePointsWithMaps(mapsData, pointsData);
-    const navBar = await getFavouritesNavbar(1);
+    const mapsWithPoints = leaflet.associatePointsWithMaps(mapsData, pointsData);
+    const contributedNavBar = await db.getContributedNavbar(userId);
+    const favouritesNavBar = await db.getFavouritesNavbar(userId);
     // Render the 'index' view and pass the maps data with associated points to it
-    res.render('index', { mapsWithPoints, navBar});
+    res.render('index', { mapsWithPoints, contributedNavBar, favouritesNavBar});
   } catch (error) {
     console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');
