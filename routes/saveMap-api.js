@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../db/connection');
 
 // Define a route to save map data
-router.post('/save-map', async(req, res) => {
+router.post('/create', async(req, res) => {
   try {
     const { user_id, title, description, longitude, latitude, points } = req.body;
 
