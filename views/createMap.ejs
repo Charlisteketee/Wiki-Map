@@ -15,6 +15,7 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
   <script src="/vendor/jquery-3.0.0.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script defer src="/scripts/app.js"></script>
   <style>
     /* Set a specific height for the map container */
@@ -86,6 +87,32 @@
         // Customize the new map as needed
         // You can append the new map to a div element in your existing page
         document.getElementById('new-map-container').appendChild(newMap.getContainer());
+      }
+
+      //New functions
+      document.getElementById('createNewMap').addEventListener('click', function () {
+        var coordinates = drawnItems.toGeoJSON().geometry.coordinates;
+        // Send data to server-side code
+        saveMapData(coordinates);
+      });
+
+      function saveMapData(coordinates) {
+        // Make an AJAX request to your server-side code
+        $.ajax({
+          url: '/save-map', // URL of your server-side endpoint
+          type: 'POST', // HTTP method
+          contentType: 'application/json',
+          data: JSON.stringify({ coordinates: coordinates }), // Data to send to the server
+          success: function(response) {
+            // Handle success response from the server
+            console.log('Map data saved successfully:', response);
+          // You can optionally perform any actions here after successfully saving data
+          },
+          error: function(xhr, status, error) {
+          // Handle error response from the server
+          console.error('Error saving map data:', error);
+          }
+        });
       }
     </script>
   </main>
