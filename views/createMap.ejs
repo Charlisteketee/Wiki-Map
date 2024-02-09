@@ -112,24 +112,24 @@
       saveMapData(mapData);
     });
 
-    //function saveMapData(mapData) {
-    //  // Your code for sending data to the server-side endpoint
-    //  $.ajax({
-    //    url: '/save-map', // URL of your server-side endpoint
-    //    type: 'POST', // HTTP method
-    //    contentType: 'application/json',
-    //    data: JSON.stringify(mapData), // Data to send to the server
-    //    success: function(response) {
-    //      // Handle success response from the server
-    //      console.log('Map data saved successfully:', response);
-    //      // You can optionally perform any actions here after successfully saving data
-    //    },
-    //    error: function(xhr, status, error) {
-    //      // Handle error response from the server
-    //      console.error('Error saving map data:', error);
-    //    }
-    //  });
-    //}
+    function saveMapData(mapData) {
+      // Your code for sending data to the server-side endpoint
+      $.ajax({
+        url: '/save-map', // URL of your server-side endpoint
+        type: 'POST', // HTTP method
+        contentType: 'application/json',
+        data: JSON.stringify(mapData), // Data to send to the server
+        success: function(response) {
+          // Handle success response from the server
+          console.log('Map data saved successfully:', response);
+          // You can optionally perform any actions here after successfully saving data
+        },
+        error: function(xhr, status, error) {
+          // Handle error response from the server
+          console.error('Error saving map data:', error);
+        }
+      });
+    }
     </script>
   </main>
 </body>
