@@ -15,9 +15,7 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
   <script src="/vendor/jquery-3.0.0.js"></script>
-  <script defer src="/scripts/app.js"></script>
   <style>
-    /* Set a specific height for the map container */
     #map {
       width: 800px;
       height: 600px;
@@ -27,20 +25,12 @@
 <body>
   <%- include('partials/_navbar') %>
   <main class="maps">
-    <!-- Container for Maps -->
     <h1>Draw and Create a New Map</h1>
-    <!-- Map Container -->
     <div id="map"></div>
-    <!-- Button to Create New Map -->
-    <form method="POST" action="/api/create-map/save-map">
-      <button id="createNewMap" type="submit">Create New Map</button>
-    </form>
-
-    <!-- Coordinates Display -->
+    <button id="createNewMap">Create New Map</button>
     <div id="coordinates"></div>
     <script>
-      var map = L.map('map').setView([0, 0], 2); // Default view super zoomed out
-
+      var map = L.map('map').setView([0, 0], 2);
       L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
         maxZoom: 20,
         attribution: '&copy; ...'
@@ -59,45 +49,41 @@
       map.on(L.Draw.Event.CREATED, function (event) {
         var layer = event.layer;
         drawnItems.addLayer(layer);
-        // Optionally, update UI or store coordinates immediately
       });
 
-      // Assuming the button within a form as you had, or directly attaching an event listener
       document.getElementById('createNewMap').addEventListener('click', function (e) {
-        e.preventDefault(); // Prevent form submission if within a form
+        e.preventDefault();
+        var bounds = drawnItems.getBounds();
+        var center = bounds.getCenter();
 
         var mapData = {
-          user_id: req.cookies.user_id, // Aligns with `user_id` in `maps` table. This needs to come from your application's user session or authentication context.
-          title: "User's Map Title", // Directly aligns with `title` in `maps` table. This would typically be input by the user in a text field.
-          description: "A brief description of the map", // Aligns with `description` in `maps` table. Also input by the user.
-          longitude: CENTRAL_LONGITUDE, // Aligns with `longitude` in `maps` table. Could be the map center or derived from drawn points.
-          latitude: CENTRAL_LATITUDE, // Aligns with `latitude` in `maps` table. Similar to `longitude`, this could be map center or derived.
-          points: [ // This array will contain objects that align with the `points` table structure.
-            {
-              latitude: POINT_LATITUDE, // Aligns with `latitude` in `points` table.
-              longitude: POINT_LONGITUDE, // Aligns with `longitude` in `points` table.
-              title: "Point Title", // Potentially aligns with `title` in `points` table. This could be input via a modal or side form when a point is placed or selected.
-              body: "Description of what this point represents", // Aligns with `body` in `points` table. Similar input method as `title`.
-              image_url: "URL_to_an_associated_image" // Aligns with `image_url` in `points` table. Could be another field in the point detail input form.
-            },
-            // Additional points as necessary
-  ]
-};
+          // Note: Ensure user_id is securely fetched from server or session
+          title: "User's Map Title",
+          description: "A brief description of the map",
+          longitude: center.lng,
+          latitude: center.lat,
+          points: drawnItems.toGeoJSON().features.map(feature => ({
+            longitude: feature.geometry.coordinates[0],
+            latitude: feature.geometry.coordinates[1],
+            title: "Dynamic Point Title",
+            body: "Dynamic Description",
+            image_url: "Dynamic URL"
+          }))
+        };
 
-        // Here, implement sending mapData to your server
-        // Example AJAX call using jQuery
+        console.log(mapData);
         $.ajax({
-          url: '/api/create-map/save-map', // Your server endpoint to handle the map creation
+          url: '/api/create-map/save-map',
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify(mapData),
           success: function(response) {
             console.log('Map saved:', response);
-            // Further actions upon success, e.g., redirect or inform the user
+            // Implement success feedback
           },
           error: function(xhr, status, error) {
             console.error('Error:', error);
-            // Error handling, e.g., inform the user
+            // Implement error feedback
           }
         });
       });

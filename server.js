@@ -24,7 +24,7 @@ app.set('view engine', 'ejs');
 app.use(morgan('dev'));
 
 app.use(cookieParser()); // creates and populates req.cookies
-
+app.use(express.json());
 app.use(checkLoggedIn);
 app.use(express.urlencoded({ extended: true }));
 app.use(
