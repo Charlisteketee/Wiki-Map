@@ -10,7 +10,6 @@ const morgan = require('morgan');
 const { checkLoggedIn } = require('./helper-functions/checkLoggedIn');
 
 
-
 const PORT = process.env.PORT || 8080;
 const app = express();
 

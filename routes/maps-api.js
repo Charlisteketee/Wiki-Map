@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
 
 // filter maps by title
 router.get('/search', (req, res) => {
-  const { title } = req.query; // this assumes the title is passed as a query parameter
+  const { title } = req.query; // the title is passed as a query parameter
 
   db.filterMapsByTitle(title)
     .then(maps => {
@@ -37,9 +37,34 @@ router.get('/search', (req, res) => {
       res.status(500).json({ error: err.message });
     });
 });
+
+// display a single map
+router.get('/:mapId', async (req, res) => {
+  const mapId = req.params.mapId;
+  try {
+    // get data for the specific map
+    const [mapData, pointsData] = await Promise.all([
+      db.getMap(mapId),
+      db.getPointsData()
+    ]);
+
+    // Associate marker data with the map
+    const mapsWithPoints = leaflet.associatePointsWithMaps(mapData, pointsData);
+
+    // Fetch navbar data
+    const contributedNavBar = await db.getContributedNavbar(userId);
+    const favouritesNavBar = await db.getFavouritesNavbar(userId);
+    // Render the 'index' view with the maps data and navbar data
+    res.render('singleMap', { mapsWithPoints, contributedNavBar, favouritesNavBar });
+  } catch (error) {
+    console.error('An error occurred:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 // get specific map on favourites
 router.get('/favourites/:mapId', async (req, res) => {
-  const userId = req.cookies.user_id; // For demonstration purposes; replace this with the actual user ID retrieval logic
+  const userId = req.cookies.user_id;
   const mapId = req.params.mapId;
   try {
 
@@ -64,7 +89,7 @@ router.get('/favourites/:mapId', async (req, res) => {
 });
 // get specific map on contributed maps
 router.get('/contributed/:mapId', async(req, res) => {
-  const userId = req.cookies.user_id; //For demonstration purposes. Replace with actual user
+  const userId = req.cookies.user_id;
   const mapId = req.params.mapId;
   try {
 

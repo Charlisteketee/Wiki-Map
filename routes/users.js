@@ -30,6 +30,14 @@ router.get('/login/:user_id', (req, res) => {
   res.redirect('/');
 });
 
+// define the logout route
+router.post('/logout', (req, res) => {
+  // Clear cookies
+  res.clearCookie('user_id');
+  // Redirect the user back to /
+  res.redirect('/');
+});
+
 
 
 
