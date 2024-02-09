@@ -69,7 +69,7 @@ router.get('/contributed/:mapId', async(req, res) => {
   try {
 
     const [mapsData, pointsData] = await Promise.all([
-      db.getMap(userId),
+      db.getMap(mapId),
       db.getPointsData()
     ]);
     // Associate marker data with each map

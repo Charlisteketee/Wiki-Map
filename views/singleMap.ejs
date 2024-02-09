@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Map Application</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -26,11 +25,11 @@
     }
   </style>
 </head>
-<body>
+<header>
+  <h1>Wiki Maps</h1>
   <%- include('partials/_navbar') %>
-  <header>
-    <h1>Wiki Maps</h1>
-  </header>
+</header>
+<body>
   <main class="maps">
     <div id="maps-container"></div>
   </main>
@@ -68,6 +67,8 @@
           drawnItems.addLayer(layer);
           // Example: Process the drawing here, e.g., save to server
         });
+        var group = new L.featureGroup(mapData.markers.map(marker => L.marker([marker.latitude, marker.longitude])));
+          map.fitBounds(group.getBounds().pad(0.2));
 
         var likeButton = document.createElement('button');
         likeButton.className = 'like-button';
