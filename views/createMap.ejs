@@ -49,6 +49,60 @@
       map.on(L.Draw.Event.CREATED, function (event) {
         var layer = event.layer;
         drawnItems.addLayer(layer);
+
+        // Open popup for the newly added point
+        var popupContent = '<form id="pointForm">' +
+          '<label for="pointTitle">Title:</label>' +
+          '<input type="text" id="pointTitle" name="pointTitle"><br>' +
+          '<label for="pointBody">Description:</label>' +
+          '<textarea id="pointBody" name="pointBody"></textarea><br>' +
+          '<label for="pointImageURL">Image URL:</label>' +
+          '<input type="text" id="pointImageURL" name="pointImageURL"><br>' +
+          '<input type="button" value="Save" id="saveButton">' +
+          '</form>';
+
+        layer.bindPopup(popupContent).openPopup();
+
+        // Prevent map click event when interacting with the popup form
+        layer.on('click', function (e) {
+          L.DomEvent.stopPropagation(e);
+          var prevData = layer.options.prevData;
+          if (prevData) {
+            $('#pointTitle').val(prevData.title);
+            $('#pointBody').val(prevData.body);
+            $('#pointImageURL').val(prevData.image_url);
+          }
+        });
+
+        // Handle form submission
+        $('#saveButton').click(function () {
+          var formData = {
+            title: $('#pointTitle').val(),
+            body: $('#pointBody').val(),
+            image_url: $('#pointImageURL').val()
+          };
+          console.log('Form data:', formData);
+          layer.options.prevData = formData; // Save form data for future use
+          map.closePopup(layer.getPopup());
+
+          // AJAX request to save data
+          $.ajax({
+            url: '/api/create-map/save-map',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(mapData),
+            success: function(response) {
+              console.log('Map saved:', response);
+              // Implement success feedback
+            },
+            error: function(xhr, status, error) {
+              console.error('Error:', error);
+              // Implement error feedback
+            }
+          });
+
+          return false; // Prevent default button click behavior
+        });
       });
 
       document.getElementById('createNewMap').addEventListener('click', function (e) {
@@ -57,7 +111,6 @@
         var center = bounds.getCenter();
 
         var mapData = {
-          // Note: Ensure user_id is securely fetched from server or session
           title: "User's Map Title",
           description: "A brief description of the map",
           longitude: center.lng,
@@ -87,6 +140,18 @@
           }
         });
       });
+
+      // Function to reopen popup and display previous data when marker is clicked
+      function reopenPopupAndDisplayData(layer) {
+        var prevData = layer.options.prevData;
+        if (prevData) {
+          $('#pointTitle').val(prevData.title);
+          $('#pointBody').val(prevData.body);
+          $('#pointImageURL').val(prevData.image_url);
+        }
+        layer.openPopup();
+      }
+
     </script>
   </main>
 </body>

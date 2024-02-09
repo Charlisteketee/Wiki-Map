@@ -87,9 +87,11 @@ router.get('/contributed/:mapId', async(req, res) => {
 
 // create a new map
 router.get('/createMap', async (req, res) => {
+const userId = req.cookies.user_id; //For demonstration purposes. Replace with actual user
   try {
-    const navBar = await db.getFavouritesNavbar(1);
-    res.render('createMap', { navBar });
+    const contributedNavBar = await db.getContributedNavbar(userId);
+    const favouritesNavBar = await db.getFavouritesNavbar(userId);
+    res.render('createMap', { contributedNavBar, favouritesNavBar });
   } catch (error) {
     console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');
