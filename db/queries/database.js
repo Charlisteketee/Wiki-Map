@@ -93,6 +93,7 @@ const getMapId = function (userId, mapId) {
       console.log(err.message);
     });
 };
+
 // get just one favourite from list of favourites
 const getFavourite = function (userId, mapId) {
   return db.query(`
@@ -109,6 +110,7 @@ const getFavourite = function (userId, mapId) {
       console.log(err.message);
     });
 };
+
 // queries all favourites to display for a specific user, lists on navbar
 const getFavouritesNavbar = function (userId) {
   return db.query(`
@@ -123,6 +125,7 @@ const getFavouritesNavbar = function (userId) {
       console.log(err.message);
     });
 };
+
 //Contributed maps helper functions
 const getContributedNavbar = function(userId) {
   return db.query(`
