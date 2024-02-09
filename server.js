@@ -64,7 +64,7 @@ app.use('/users', usersRoutes);
 app.use('/api/maps', mapsApiRoutes); // We can change the route (/api/maps) to just / once we have organized the index.ejs file
 app.use('/api/maps/points', pointsApiRoutes);
 app.use('/api/', favoritesApiRoutes);
-app.use('/api/save-map', saveMapRoute);
+app.use('/api/create-map/', saveMapRoute);
 
 // Home page
 // Warning: avoid creating more routes in this file!

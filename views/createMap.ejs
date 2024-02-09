@@ -33,7 +33,10 @@
     <!-- Map Container -->
     <div id="map"></div>
     <!-- Button to Create New Map -->
-    <button id="createNewMap">Create New Map</button>
+    <form method="POST" action="/api/create-map/save-map">
+      <button id="createNewMap" type="submit">Create New Map</button>
+    </form>
+
     <!-- Coordinates Display -->
     <div id="coordinates"></div>
     <script>
@@ -91,7 +94,7 @@
 
       //New functions
       document.getElementById('createNewMap').addEventListener('click', function () {
-      // Your code for handling the "Create New Map" button click
+      // Code for handling the "Create New Map" button click
       var mapData = {
         user_id: 1, // Assuming you have a user ID for the map
         title: 'My New Map',
