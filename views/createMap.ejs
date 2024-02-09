@@ -33,7 +33,10 @@
     <!-- Map Container -->
     <div id="map"></div>
     <!-- Button to Create New Map -->
-    <button id="createNewMap">Create New Map</button>
+    <form method="POST" action="/api/create-map/save-map">
+      <button id="createNewMap" type="submit">Create New Map</button>
+    </form>
+
     <!-- Coordinates Display -->
     <div id="coordinates"></div>
     <script>
@@ -91,7 +94,7 @@
 
       //New functions
       document.getElementById('createNewMap').addEventListener('click', function () {
-      // Your code for handling the "Create New Map" button click
+      // Code for handling the "Create New Map" button click
       var mapData = {
         user_id: 1, // Assuming you have a user ID for the map
         title: 'My New Map',
@@ -109,24 +112,24 @@
       saveMapData(mapData);
     });
 
-    function saveMapData(mapData) {
-      // Your code for sending data to the server-side endpoint
-      $.ajax({
-        url: '/save-map', // URL of your server-side endpoint
-        type: 'POST', // HTTP method
-        contentType: 'application/json',
-        data: JSON.stringify(mapData), // Data to send to the server
-        success: function(response) {
-          // Handle success response from the server
-          console.log('Map data saved successfully:', response);
-          // You can optionally perform any actions here after successfully saving data
-        },
-        error: function(xhr, status, error) {
-          // Handle error response from the server
-          console.error('Error saving map data:', error);
-        }
-      });
-    }
+    //function saveMapData(mapData) {
+    //  // Your code for sending data to the server-side endpoint
+    //  $.ajax({
+    //    url: '/save-map', // URL of your server-side endpoint
+    //    type: 'POST', // HTTP method
+    //    contentType: 'application/json',
+    //    data: JSON.stringify(mapData), // Data to send to the server
+    //    success: function(response) {
+    //      // Handle success response from the server
+    //      console.log('Map data saved successfully:', response);
+    //      // You can optionally perform any actions here after successfully saving data
+    //    },
+    //    error: function(xhr, status, error) {
+    //      // Handle error response from the server
+    //      console.error('Error saving map data:', error);
+    //    }
+    //  });
+    //}
     </script>
   </main>
 </body>
