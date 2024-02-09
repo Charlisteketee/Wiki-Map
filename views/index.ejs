@@ -79,27 +79,30 @@
           var group = new L.featureGroup(mapData.markers.map(marker => L.marker([marker.latitude, marker.longitude])));
           map.fitBounds(group.getBounds().pad(0.2));
 
+          // Create and append the edit button for this map
+          var editButton = document.createElement('button');
+          editButton.className = 'edit-button';
+          editButton.textContent = 'Edit';
+          containerDiv.appendChild(editButton); // Append the button to containerDiv
+
+
           // Create and append the like button for this map
           var likeButton = document.createElement('button');
           likeButton.className = 'like-button';
           likeButton.textContent = 'Like';
           containerDiv.appendChild(likeButton); // Append the button to containerDiv
 
-          // Add event listener for like button
+          // event listener for like button
           likeButton.addEventListener('click', function() {
             fetch('/api/maps/like/' + mapData.id, {
               method: 'POST'
-            })
-            .then(response => {
-              if (response.ok) {
-                  console.log('Map liked successfully!');
-              } else {
-                  console.error('Failed to like map');
-              }
-            })
-            .catch(error => {
-              console.error('Error liking map:', error);
             });
+          });
+          
+          // event listener for edit button
+          editButton.addEventListener('click', function() {
+            // Redirect to the route for editing the map
+            window.location.href = '/api/maps/edit/' + mapData.id;
           });
         });
       }
