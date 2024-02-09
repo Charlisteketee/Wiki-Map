@@ -15,7 +15,6 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
   <script src="/vendor/jquery-3.0.0.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script defer src="/scripts/app.js"></script>
   <style>
     /* Set a specific height for the map container */
@@ -40,96 +39,68 @@
     <!-- Coordinates Display -->
     <div id="coordinates"></div>
     <script>
-      // Create the map
       var map = L.map('map').setView([0, 0], 2); // Default view super zoomed out
-      // Define the tile layer
+
       L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
         maxZoom: 20,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+        attribution: '&copy; ...'
       }).addTo(map);
-      // Enable drawing tools (Polygon, Rectangle, etc.) on the map
+
       var drawnItems = new L.FeatureGroup();
       map.addLayer(drawnItems);
+
       var drawControl = new L.Control.Draw({
         edit: {
           featureGroup: drawnItems
         }
       });
       map.addControl(drawControl);
-      // Handle when a user draws a shape (e.g., polygon) on the map
-      map.on('draw:created', function (e) {
-        var layer = e.layer;
+
+      map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
         drawnItems.addLayer(layer);
-        // Get the coordinates of the drawn shape
-        var coordinates = layer.toGeoJSON().geometry.coordinates;
-        displayCoordinates(coordinates);
+        // Optionally, update UI or store coordinates immediately
       });
-      // Function to display coordinates
-      function displayCoordinates(coordinates) {
-        document.getElementById('coordinates').innerHTML = 'Coordinates: ' + JSON.stringify(coordinates);
-      }
-      // Event listener for the "Create New Map" button
-      document.getElementById('createNewMap').addEventListener('click', function () {
-        var coordinates = drawnItems.toGeoJSON().geometry.coordinates;
-        // Create a new map using the drawn coordinates (customize as needed)
-        createNewMap(coordinates);
+
+      // Assuming the button within a form as you had, or directly attaching an event listener
+      document.getElementById('createNewMap').addEventListener('click', function (e) {
+        e.preventDefault(); // Prevent form submission if within a form
+
+        var mapData = {
+          user_id: req.cookies.user_id, // Aligns with `user_id` in `maps` table. This needs to come from your application's user session or authentication context.
+          title: "User's Map Title", // Directly aligns with `title` in `maps` table. This would typically be input by the user in a text field.
+          description: "A brief description of the map", // Aligns with `description` in `maps` table. Also input by the user.
+          longitude: CENTRAL_LONGITUDE, // Aligns with `longitude` in `maps` table. Could be the map center or derived from drawn points.
+          latitude: CENTRAL_LATITUDE, // Aligns with `latitude` in `maps` table. Similar to `longitude`, this could be map center or derived.
+          points: [ // This array will contain objects that align with the `points` table structure.
+            {
+              latitude: POINT_LATITUDE, // Aligns with `latitude` in `points` table.
+              longitude: POINT_LONGITUDE, // Aligns with `longitude` in `points` table.
+              title: "Point Title", // Potentially aligns with `title` in `points` table. This could be input via a modal or side form when a point is placed or selected.
+              body: "Description of what this point represents", // Aligns with `body` in `points` table. Similar input method as `title`.
+              image_url: "URL_to_an_associated_image" // Aligns with `image_url` in `points` table. Could be another field in the point detail input form.
+            },
+            // Additional points as necessary
+  ]
+};
+
+        // Here, implement sending mapData to your server
+        // Example AJAX call using jQuery
+        $.ajax({
+          url: '/api/create-map/save-map', // Your server endpoint to handle the map creation
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(mapData),
+          success: function(response) {
+            console.log('Map saved:', response);
+            // Further actions upon success, e.g., redirect or inform the user
+          },
+          error: function(xhr, status, error) {
+            console.error('Error:', error);
+            // Error handling, e.g., inform the user
+          }
+        });
       });
-      // Function to create a new map based on coordinates (customize as needed)
-      function createNewMap(coordinates) {
-        // Add your code here to create a new map using the retrieved coordinates
-        // You can use the Leaflet library to create a new map, set markers, and customize the map as desired.
-        // Here's a basic example:
-        // Create a new map centered around the first coordinate point
-        var newMap = L.map('new-map').setView(coordinates[0][0], 12);
-        // Define the tile layer for the new map
-        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-          maxZoom: 20,
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
-        }).addTo(newMap);
-        // Add markers or shapes to the new map based on the retrieved coordinates
-        // Customize the new map as needed
-        // You can append the new map to a div element in your existing page
-        document.getElementById('new-map-container').appendChild(newMap.getContainer());
-      }
-
-      //New functions
-      document.getElementById('createNewMap').addEventListener('click', function () {
-      // Code for handling the "Create New Map" button click
-      var mapData = {
-        user_id: 1, // Assuming you have a user ID for the map
-        title: 'My New Map',
-        description: 'Description of the map',
-        longitude: 0, // Adjust as needed
-        latitude: 0, // Adjust as needed
-        points: [
-          { longitude: 1, latitude: 1, title: 'Point 1', body: 'Description of point 1', image_url: 'point1.jpg' },
-          { longitude: 2, latitude: 2, title: 'Point 2', body: 'Description of point 2', image_url: 'point2.jpg' }
-          // Add more points as needed
-        ]
-      };
-
-      // Send data to server-side code
-      saveMapData(mapData);
-    });
-
-    function saveMapData(mapData) {
-      // Your code for sending data to the server-side endpoint
-      $.ajax({
-        url: '/save-map', // URL of your server-side endpoint
-        type: 'POST', // HTTP method
-        contentType: 'application/json',
-        data: JSON.stringify(mapData), // Data to send to the server
-        success: function(response) {
-          // Handle success response from the server
-          console.log('Map data saved successfully:', response);
-          // You can optionally perform any actions here after successfully saving data
-        },
-        error: function(xhr, status, error) {
-          // Handle error response from the server
-          console.error('Error saving map data:', error);
-        }
-      });
-    }
     </script>
   </main>
 </body>
