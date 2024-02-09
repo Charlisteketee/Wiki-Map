@@ -50,59 +50,20 @@
         var layer = event.layer;
         drawnItems.addLayer(layer);
 
+        enableEditing(layer);
+
         // Open popup for the newly added point
         var popupContent = '<form id="pointForm">' +
-        '<label for="pointTitle">Title:</label>' +
-        '<input type="text" id="pointTitle" name="pointTitle"><br>' +
-        '<label for="pointDescription">Description:</label>' +
-        '<textarea id="pointDescription" name="pointDescription"></textarea><br>' +
-        '<label for="pointImageURL">Image URL:</label>' +
-        '<input type="text" id="pointImageURL" name="pointImageURL"><br>' +
-        '<input type="button" value="Save" id="saveButton">' +
-        '</form>';
+          '<label for="pointTitle">Title:</label>' +
+          '<input type="text" id="pointTitle" name="pointTitle"><br>' +
+          '<label for="pointBody">Description:</label>' +
+          '<textarea id="pointBody" name="pointBody"></textarea><br>' +
+          '<label for="pointImageURL">Image URL:</label>' +
+          '<input type="text" id="pointImageURL" name="pointImageURL"><br>' +
+          '<input type="button" value="Save" id="saveButton">' +
+          '</form>';
 
         layer.bindPopup(popupContent).openPopup();
-
-        // Prevent map click event when interacting with the popup form
-        layer.on('click', function (e) {
-          L.DomEvent.stopPropagation(e);
-          var prevData = layer.options.prevData;
-          if (prevData) {
-            $('#pointTitle').val(prevData.title);
-            $('#pointBody').val(prevData.body);
-            $('#pointImageURL').val(prevData.image_url);
-          }
-        });
-
-        // Handle form submission
-        $('#saveButton').click(function () {
-          var formData = {
-            title: $('#pointTitle').val(),
-            body: $('#pointBody').val(),
-            image_url: $('#pointImageURL').val()
-          };
-          console.log('Form data:', formData);
-          layer.options.prevData = formData; // Save form data for future use
-          map.closePopup(layer.getPopup());
-
-          // AJAX request to save data
-          $.ajax({
-            url: '/api/create-map/save-map',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(mapData),
-            success: function(response) {
-              console.log('Map saved:', response);
-              // Implement success feedback
-            },
-            error: function(xhr, status, error) {
-              console.error('Error:', error);
-              // Implement error feedback
-            }
-          });
-
-          return false; // Prevent default button click behavior
-        });
       });
 
       document.getElementById('createNewMap').addEventListener('click', function (e) {
@@ -152,6 +113,22 @@
         layer.openPopup();
       }
 
+      function enableEditing(layer) {
+        layer.on('click', function () {
+          if (!map.hasLayer(layer)) {
+            map.addLayer(layer);
+          }
+        });
+        drawnItems.on('click', function () {
+          map.addLayer(layer);
+        });
+        layer.on('edit', function (event) {
+          var editedLayer = event.target;
+          var latlng = editedLayer.getLatLng();
+          console.log('Marker edited:', latlng);
+          // Handle marker edit (e.g., update coordinates in the database)
+        });
+      }
     </script>
   </main>
 </body>
