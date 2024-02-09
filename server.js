@@ -50,6 +50,7 @@ const { getAllMaps, getMapsData, getPointsData, getFavouritesNavbar } = require(
 const {associatePointsWithMaps} = require('./helper-functions/leafletHelperFunctions');
 const pointsApiRoutes = require('./routes/points-api');
 const favoritesApiRoutes = require('./routes/favourites-api');
+const saveMapRoute = require('./routes/saveMap-api');
 
 
 
@@ -63,6 +64,7 @@ app.use('/users', usersRoutes);
 app.use('/api/maps', mapsApiRoutes); // We can change the route (/api/maps) to just / once we have organized the index.ejs file
 app.use('/api/maps/points', pointsApiRoutes);
 app.use('/api/', favoritesApiRoutes);
+app.use('/api/save-map', saveMapRoute);
 
 // Home page
 // Warning: avoid creating more routes in this file!
