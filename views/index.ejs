@@ -84,6 +84,23 @@
           likeButton.className = 'like-button';
           likeButton.textContent = 'Like';
           containerDiv.appendChild(likeButton); // Append the button to containerDiv
+
+          // Add event listener for like button
+          likeButton.addEventListener('click', function() {
+            fetch('/api/maps/like/' + mapData.id, {
+              method: 'POST'
+            })
+            .then(response => {
+              if (response.ok) {
+                  console.log('Map liked successfully!');
+              } else {
+                  console.error('Failed to like map');
+              }
+            })
+            .catch(error => {
+              console.error('Error liking map:', error);
+            });
+          });
         });
       }
 

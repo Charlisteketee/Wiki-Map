@@ -291,7 +291,9 @@ const deletePoint = function (pointId) {
     throw error;
   });
 };
+const addToFavorites = function (userId, mapId) {
+  return db.query('INSERT INTO favourites (user_id, map_id) VALUES ($1, $2)', [userId, mapId]);
+};
 
-
-module.exports = {getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMap, getAllMapLocations, updatePoint, createPoint, deletePoint, filterMapsByTitle, deleteMap, getContributedNavbar, getContributed, getUser };
+module.exports = { addToFavorites, getFavouritesNavbar, getFavourite, getMapsData, getPointsData, getAllMaps, getMap, getAllMapLocations, updatePoint, createPoint, deletePoint, filterMapsByTitle, deleteMap, getContributedNavbar, getContributed, getUser };
 

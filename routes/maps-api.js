@@ -11,6 +11,24 @@ const db = require('../db/queries/database');
 const leaflet = require ('../helper-functions/leafletHelperFunctions')
 
 // Routes append /api/maps
+// liking a map
+router.post('/like/:mapId', async (req, res) => {
+  const userId = req.cookies.user_id;
+  const mapId = req.params.mapId;
+
+  if (!userId) {
+    return res.status(401).send('Not logged in');
+  }
+
+  try {
+    // call the function to add the map to favorites
+    await db.addToFavorites(userId, mapId);
+    res.sendStatus(200); // success!
+  } catch (error) {
+    console.error('An error occurred:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 // get all maps
 router.get('/', (req, res) => {
@@ -142,6 +160,8 @@ router.get('/:mapId', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+
 
 
 module.exports = router;

@@ -57,6 +57,7 @@ const saveMapRoute = require('./routes/saveMap-api');
 // Note: Endpoints that return data (eg. JSON) usually start with `/api`
 //app.use('/api/database', userApiRoutes(db));
 //app.use('/api/widgets', widhes);
+
 app.use('/users', usersRoutes);
 // Note: mount other resources here, using the same pattern above
 app.use('/api/maps', mapsApiRoutes); // We can change the route (/api/maps) to just / once we have organized the index.ejs file
