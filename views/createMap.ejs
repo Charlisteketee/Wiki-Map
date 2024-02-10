@@ -139,6 +139,7 @@
           success: function(response) {
             console.log('Map saved:', response);
             // Implement success feedback
+            window.location.href = '/';
           },
           error: function(xhr, status, error) {
             console.error('Error:', error);
