@@ -1,43 +1,40 @@
-<!--nav bar partial will b here-->>
 <!DOCTYPE html>
 
 <nav>
   <a href="/" class="logo">Wiki Maps</a>
   <div><img src="/images/profile-hex.png"></div>
-  <h2>Username</h2>
-  <% if (typeof(username) !== 'undefined') { %>
-    <p>Logged in as <%= username %></p>
+  <% if (typeof(userId) !== 'undefined') { %>
+    <p>Logged in as <%= userId %></p>
+    <section class="user-options">
+      <div>
+        <form method="GET" action="/api/maps/createMap">
+          <button type="submit">Create a Map</button>
+        </form>
+      </div>
+      <h3>Favourite Maps</h3>
+      <div class="favourite-maps">
+        <% favouritesNavBar.forEach(item => { %>
+          <form method="GET" action="/api/maps/favourites/<%= item.map_id %>">
+            <button type="submit"><%= item.title %></button>
+          </form>
+        <% }); %>
+      </div>
+
+      <h3>Contributed Maps</h3>
+      <div class="contributed-maps">
+        <% contributedNavBar.forEach(item => { %>
+          <form method="GET" action="/api/maps/contributed/<%= item.map_id %>">
+            <button type="submit"><%= item.title %></button>
+          </form>
+        <% }); %>
+      </div>
+      <div>
+        <form method = "POST" action = "/users/logout">
+          <button type= "submit">Logout</button>
+        </form>
+      </div>
+    </section>
   <% } else { %>
     <p>Not logged in</p>
   <% } %>
-  <section class="user-options">
-    </div>
-    <div>
-      <form method="GET" action="/api/maps/createMap">
-        <button type="submit">Create a Map</button>
-      </form>
-    </div>
-    <h3>Favourite Maps</h3>
-    <div class="favourite-maps">
-      <% favouritesNavBar.forEach(item => { %>
-        <form method="GET" action="/api/maps/favourites/<%= item.map_id %>">
-          <button type="submit"><%= item.title %></button>
-        </form>
-      <% }); %>
-    </div>
-
-    <h3>Contributed Maps</h3>
-    <div class="contributed-maps">
-      <% contributedNavBar.forEach(item => { %>
-        <form method="GET" action="/api/maps/contributed/<%= item.map_id %>">
-          <button type="submit"><%= item.title %></button>
-        </form>
-      <% }); %>
-    </div>
-    <div>
-      <form method = "POST" action = "/users/logout">
-        <button type= "submit">Logout</button>
-      </form>
-    </div>
-  </section>
 </nav>

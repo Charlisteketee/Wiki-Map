@@ -36,12 +36,10 @@
     <script>
       // Get the mapsWithPoints data from the server
       const mapsWithPoints = <%- JSON.stringify(mapsWithPoints) %>;
-
       // Function to create and render maps with padding
+      const userId = '<%= userId %>';
       function createMaps() {
-        var mapsContainer = document.getElementById('maps-container');
-        const userId = <%- JSON.stringify(userId) %>; // Get the user_id from the cookies
-
+        var mapsContainer = document.getElementById('maps-container'); // Get the user_id from the cookies
         mapsWithPoints.forEach(function (mapData, index) {
           // Create a container div for each map and its like button
           var containerDiv = document.createElement('div');
@@ -74,8 +72,6 @@
           // Create the map
           var map = L.map('map-' + index).setView([mapData.latitude, mapData.longitude], 14);
           L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {}).addTo(map);
-          mapData.markers.forEach(function (marker) {
-            L.marker([marker.latitude, marker.longitude]).addTo(map);
             mapData.markers.forEach(function (marker) {
               var markerInstance = L.marker([marker.latitude, marker.longitude]).addTo(map);
 
@@ -90,13 +86,12 @@
               markerInstance.on('click', function (e) {
                 L.DomEvent.stopPropagation(e);
                 $('#pointTitle').val(marker.title);
-                $('#pointBody').val(marker.description);
+                $('#pointBody').val(marker.body);
                 $('#pointImageURL').val(marker.image_url);
               });
 
 
             });
-          });
       var group = new L.featureGroup(mapData.markers.map(marker => L.marker([marker.latitude, marker.longitude])));
       map.fitBounds(group.getBounds().pad(0.2));
 
@@ -108,7 +103,7 @@
             containerDiv.appendChild(editButton); // Append the button to containerDiv
 
             // event listener for edit button
-            editButton.addEventListener('click', function() {
+            editButton.addEventListener('click', function () {
               // Redirect to the route for editing the map
               window.location.href = '/api/maps/edit/' + mapData.id;
             });
@@ -120,7 +115,7 @@
             containerDiv.appendChild(likeButton); // Append the button to containerDiv
 
             // event listener for like button
-            likeButton.addEventListener('click', function() {
+            likeButton.addEventListener('click', function () {
               fetch('/api/maps/like/' + mapData.id, {
                 method: 'POST'
               });
@@ -128,9 +123,9 @@
           }
         });
       }
+      createMaps(mapsWithPoints);
 
       // Call the function to create and render existing maps with padding
-      createMaps(mapsWithPoints);
     </script>
 </body>
 </html>

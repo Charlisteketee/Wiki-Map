@@ -65,6 +65,7 @@
           '<label for="pointImageURL">Image URL:</label>' +
           '<input type="text" id="pointImageURL" name="pointImageURL"><br>' +
           '<input type="button" value="Save" id="saveButton">' +
+          '<input type="button" value="Delete" id="deleteNewMarker">' +
           '</form>';
 
         layer.bindPopup(popupContent).openPopup();
@@ -81,7 +82,7 @@
         });
 
         // Handle form submission
-        $('#saveButton').click(function () {
+        $('#saveButton').off('click').click(function () {
           var formData = {
             title: $('#pointTitle').val(),
             body: $('#pointBody').val(),
@@ -90,23 +91,11 @@
           console.log('Form data:', formData);
           layer.options.prevData = formData; // Save form data for future use
           map.closePopup(layer.getPopup());
-
-          // AJAX request to save data
-          $.ajax({
-            url: '/api/create-map/save-map',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(mapData),
-            success: function(response) {
-              console.log('Map saved:', response);
-              // Implement success feedback
-            },
-            error: function(xhr, status, error) {
-              console.error('Error:', error);
-              // Implement error feedback
-            }
-          });
-
+          return false; // Prevent default button click behavior
+        });
+        $('#deleteNewMarker').off('click').click(function () {
+          // Remove the marker from the map
+          map.removeLayer(layer);
           return false; // Prevent default button click behavior
         });
       });
@@ -120,7 +109,7 @@
           }
 
           // Handle form submission
-          $('#saveButton').click(function () {
+          $('#saveButton').off('click').click(function () {
             var formData = {
               title: $('#pointTitle').val(),
               body: $('#pointBody').val(),
@@ -129,10 +118,11 @@
             console.log('Form data:', formData);
             layer.options.prevData = formData; // Update form data
             map.closePopup(layer.getPopup());
-
-            // AJAX request to update data
-            // ...
-
+            return false; // Prevent default button click behavior
+          });
+          $('#deleteNewMarker').off('click').click(function () {
+            // Remove the marker from the map
+            map.removeLayer(layer);
             return false; // Prevent default button click behavior
           });
         });

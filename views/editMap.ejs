@@ -150,11 +150,11 @@
           map.closePopup(layer.getPopup());
           return false; // Prevent default button click behavior
         });
-          $('#deleteNewMarker').click(function () {
-            // Remove the marker from the map
-            map.removeLayer(layer);
-            return false; // Prevent default button click behavior
-          });
+        $('#deleteNewMarker').click(function () {
+          // Remove the marker from the map
+          map.removeLayer(layer);
+          return false; // Prevent default button click behavior
+        });
       });
       map.on('popupopen', function (e) {
           var layer = e.popup._source;
@@ -199,8 +199,9 @@
         url: '/api/edit-map/:mapId',
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify(editedMapData),
+        //data: JSON.stringify(editedMapData),
         success: function(response) {
+          window.location.href = '/';
           console.log('Map saved:', response);
           // Implement success feedback
         },
@@ -214,8 +215,9 @@
 
     // Add event listener for the "Save Map" button
     $(document).ready(function() {
-      $('#saveMapButton').click(function() {
+      $('#saveMap').click(function() {
         saveMap();
+        window.location.href = '/';
       });
     });
   </script>
