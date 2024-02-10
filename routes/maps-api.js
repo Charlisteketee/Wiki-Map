@@ -30,34 +30,18 @@ router.post('/like/:mapId', async (req, res) => {
   }
 });
 
-// get all maps
-router.get('/', (req, res) => {
-  db.getAllMaps()
-    .then(maps => {
-      res.json({ maps });
-    })
-    .catch(err => {
-      res
-        .status(500)
-        .json({ error: err.message });
-    });
-});
-
-// filter maps by title
-router.get('/search', (req, res) => {
-  const { title } = req.query; // the title is passed as a query parameter
-
-  db.filterMapsByTitle(title)
-    .then(maps => {
-      res.json({ maps });
-    })
-    .catch(err => {
-      res.status(500).json({ error: err.message });
-    });
-});
-
-
-
+// // get all maps
+// router.get('/', (req, res) => {
+//   db.getAllMaps()
+//     .then(maps => {
+//       res.json({ maps });
+//     })
+//     .catch(err => {
+//       res
+//         .status(500)
+//         .json({ error: err.message });
+//     });
+// });
 // get specific map on favourites
 router.get('/favourites/:mapId', async (req, res) => {
   const userId = req.cookies.user_id;
@@ -140,6 +124,7 @@ router.delete('/delete/:mapid', (req, res) => {
 // display a single map
 router.get('/:mapId', async (req, res) => {
   const mapId = req.params.mapId;
+  const userId = req.cookies.user_id;
   try {
     // get data for the specific map
     const [mapData, pointsData] = await Promise.all([
@@ -154,7 +139,7 @@ router.get('/:mapId', async (req, res) => {
     const contributedNavBar = await db.getContributedNavbar(userId);
     const favouritesNavBar = await db.getFavouritesNavbar(userId);
     // Render the 'index' view with the maps data and navbar data
-    res.render('singleMap', { mapsWithPoints, contributedNavBar, favouritesNavBar });
+    res.render('singleMap', { mapsWithPoints, contributedNavBar, favouritesNavBar, userId});
   } catch (error) {
     console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');

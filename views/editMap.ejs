@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Home Page</title>
+  <title>Edit Map</title>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
   <link rel="stylesheet" href="/vendor/normalize-4.1.1.css" />
   <link rel="stylesheet" href="/vendor/border-box.css" />
   <link rel="stylesheet" href="/styles/layout.css" />
   <link rel="stylesheet" href="/styles/navbar.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
   <link rel="stylesheet" href="/styles/maps.css">
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
   <script src="/vendor/jquery-3.0.0.js"></script>
   <style>
-    #map {
+    .map-container {
       width: 800px;
       height: 600px;
+      margin: 20px auto;
     }
     .like-button {
       display: block;
@@ -35,141 +36,188 @@
 <body>
   <%- include('partials/_navbar') %>
   <main class="maps">
-    <h1>Edit Map</h1>
-    <div id="map"></div>
+    <div id="maps-container"></div>
     <button id="saveMap">Save Map</button>
-    <div id="coordinates"></div>
-    <script>
-      const mapData = <%- JSON.stringify(mapData) %>;
+  </main>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+  <script>
+    const mapsWithPoints = <%- JSON.stringify(mapsWithPoints) %>;
+    console.log('mapsWithPoints:', mapsWithPoints);
+    function createMaps() {
+      var mapsContainer = document.getElementById('maps-container');
 
-      function initializeMap() {
-        var mapsContainer = document.getElementById('maps-container');
+      mapsWithPoints.forEach(function (mapData, index) {
         var mapDiv = document.createElement('div');
         mapDiv.className = 'map-container';
+        mapDiv.id = 'map-' + index;
         mapsContainer.appendChild(mapDiv);
 
-        var map = L.map(mapDiv).setView([mapData.latitude, mapData.longitude], 14);
+        var map = L.map('map-' + index).setView([mapData.latitude, mapData.longitude], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {}).addTo(map);
+        mapData.markers.forEach(function (marker) {
+          var markerInstance = L.marker([marker.latitude, marker.longitude]).addTo(map);
+          var popupContent = '<form id="markerForm">' +
+            '<label for="markerTitle">Title:</label>' +
+            '<input type="text" id="markerTitle" name="markerTitle" value="' + marker.title + '"><br>' +
+            '<label for="markerBody">Description:</label>' +
+            '<textarea id="markerBody" name="markerBody">' + marker.body + '</textarea><br>' +
+            '<label for="markerImageURL">Image URL:</label>' +
+            '<input type="text" id="markerImageURL" name="markerImageURL" value="' + marker.image_url + '"><br>' +
+            '<input type="button" value="Save" id="saveMarkerButton">' +
+            '<input type="button" value="Delete" id="deleteMarkerButton">' +
+            '</form>';
+          markerInstance.bindPopup(popupContent);
 
-        mapData.markers.forEach(function (markerData) {
-          var marker = L.marker([markerData.latitude, markerData.longitude]).addTo(map);
-          var popupContent = '<form id="pointForm">' +
-                            '<label for="pointTitle">Title:</label>' +
-                            '<input type="text" id="pointTitle" name="pointTitle" value="' + markerData.title + '"><br>' +
-                            '<label for="pointBody">Description:</label>' +
-                            '<textarea id="pointBody" name="pointBody">' + markerData.description + '</textarea><br>' +
-                            '<label for="pointImageURL">Image URL:</label>' +
-                            '<input type="text" id="pointImageURL" name="pointImageURL" value="' + markerData.imageURL + '"><br>' +
-                            '<input type="button" value="Save" id="saveButton">' +
-                            '</form>';
-          marker.bindPopup(popupContent);
+          // Handle form submission
+          markerInstance.on('popupopen', function () {
+            var prevData = markerInstance.options.prevData;
+            if (prevData) {
+              $('#markerTitle').val(prevData.title);
+              $('#markerBody').val(prevData.body);
+              $('#markerImageURL').val(prevData.image_url);
+            }
+            $('#deleteMarkerButton').click(function () {
+              // Remove the marker from the map
+              map.removeLayer(markerInstance);
+              return false; // Prevent default button click behavior
+            });
+            $('#saveMarkerButton').click(function () {
+              var formData = {
+                title: $('#markerTitle').val(),
+                body: $('#markerBody').val(),
+                image_url: $('#markerImageURL').val()
+              };
+              console.log('Form data:', formData);
+              markerInstance.options.prevData = formData; // Save form data for future use
+              map.closePopup(markerInstance.getPopup());
 
-          enableEditing(marker, markerData);
-        });
+              // AJAX request to save data
+              // ...
 
-        // Initialize drawing tools for this map
+              return false; // Prevent default button click behavior
+            });
+          });
+        });// Initialize drawing tools for this map
         var drawnItems = new L.FeatureGroup();
         map.addLayer(drawnItems);
-
         var drawControl = new L.Control.Draw({
           edit: {
-            featureGroup: drawnItems
-          }
+            featureGroup: drawnItems,
+          },
         });
         map.addControl(drawControl);
 
         // Handle draw events
         map.on(L.Draw.Event.CREATED, function (event) {
-          var layer = event.layer;
-          drawnItems.addLayer(layer);
-        });
+        var layer = event.layer;
+        drawnItems.addLayer(layer);
 
-        var group = new L.featureGroup(mapData.markers.map(marker => L.marker([marker.latitude, marker.longitude])));
-        map.fitBounds(group.getBounds().pad(0.2));
+        // Open popup for the newly added point
+        var popupContent = '<form id="pointForm">' +
+          '<label for="pointTitle">Title:</label>' +
+          '<input type="text" id="pointTitle" name="pointTitle"><br>' +
+          '<label for="pointBody">Description:</label>' +
+          '<textarea id="pointBody" name="pointBody"></textarea><br>' +
+          '<label for="pointImageURL">Image URL:</label>' +
+          '<input type="text" id="pointImageURL" name="pointImageURL"><br>' +
+          '<input type="button" value="Save" id="saveButton">' +
+          '<input type="button" value="Delete" id="deleteNewMarker">' +
+          '</form>';
 
-        var likeButton = document.createElement('button');
-        likeButton.className = 'like-button';
-        likeButton.textContent = 'Like';
-        likeButton.onclick = function() {
-          console.log('Liked map ' + mapData.id);
-        };
-        mapDiv.appendChild(likeButton);
-      }
+        layer.bindPopup(popupContent).openPopup();
 
-
-      // Unsure if this section is still needed
-
-      //document.getElementById('createNewMap').addEventListener('click', function (e) {
-      //  e.preventDefault();
-      //  var bounds = drawnItems.getBounds();
-      //  var center = bounds.getCenter();
-//
-      //  var mapData = {
-      //    title: "User's Map Title",
-      //    description: "A brief description of the map",
-      //    longitude: center.lng,
-      //    latitude: center.lat,
-      //    points: drawnItems.toGeoJSON().features.map(feature => ({
-      //      longitude: feature.geometry.coordinates[0],
-      //      latitude: feature.geometry.coordinates[1],
-      //      title: "Dynamic Point Title",
-      //      body: "Dynamic Description",
-      //      image_url: "Dynamic URL"
-      //    }))
-      //  };
-
-      //  console.log(mapData);
-      //  $.ajax({
-      //    url: '/api/edit-map/:mapId',
-      //    type: 'POST',
-      //    contentType: 'application/json',
-      //    data: JSON.stringify(mapData),
-      //    success: function(response) {
-      //      console.log('Map saved:', response);
-      //      // Implement success feedback
-      //    },
-      //    error: function(xhr, status, error) {
-      //      console.error('Error:', error);
-      //      // Implement error feedback
-      //    }
-      //  });
-      //});
-
-      // Function to reopen popup and display previous data when marker is clicked
-      function reopenPopupAndDisplayData(layer) {
-        var prevData = layer.options.prevData;
-        if (prevData) {
-          $('#pointTitle').val(prevData.title);
-          $('#pointBody').val(prevData.body);
-          $('#pointImageURL').val(prevData.image_url);
-        }
-        layer.openPopup();
-      }
-
-      function enableEditing(marker, markerData) {
-        marker.on('click', function () {
-          if (!map.hasLayer(marker)) {
-            map.addLayer(marker);
+        // Prevent map click event when interacting with the popup form
+        layer.on('click', function (e) {
+          L.DomEvent.stopPropagation(e);
+          var prevData = layer.options.prevData;
+          if (prevData) {
+            $('#pointTitle').val(prevData.title);
+            $('#pointBody').val(prevData.body);
+            $('#pointImageURL').val(prevData.image_url);
           }
-          reopenPopupAndDisplayData(marker, markerData); // Call the function when marker is clicked
         });
 
-        marker.on('popupopen', function () {
-          document.getElementById('pointForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Handle form submission
+        $('#saveButton').click(function () {
+          var formData = {
+            title: $('#pointTitle').val(),
+            body: $('#pointBody').val(),
+            image_url: $('#pointImageURL').val()
+          };
+          console.log('Form data:', formData);
+          layer.options.prevData = formData; // Save form data for future use
+          map.closePopup(layer.getPopup());
+          return false; // Prevent default button click behavior
+        });
+          $('#deleteNewMarker').click(function () {
+            // Remove the marker from the map
+            map.removeLayer(layer);
+            return false; // Prevent default button click behavior
+          });
+      });
+      map.on('popupopen', function (e) {
+          var layer = e.popup._source;
+          var prevData = layer.options.prevData;
+          if (prevData) {
+            $('#pointTitle').val(prevData.title);
+            $('#pointBody').val(prevData.body);
+            $('#pointImageURL').val(prevData.image_url);
+          }
+
+          // Handle form submission
+          $('#saveButton').click(function () {
             var formData = {
-              title: document.getElementById('pointTitle').value,
-              description: document.getElementById('pointBody').value,
-              imageURL: document.getElementById('pointImageURL').value
+              title: $('#pointTitle').val(),
+              body: $('#pointBody').val(),
+              image_url: $('#pointImageURL').val()
             };
             console.log('Form data:', formData);
-            // Insert logic here to update marker data
+            layer.options.prevData = formData; // Update form data
+            map.closePopup(layer.getPopup());
+
+            return false; // Prevent default button click behavior
+          });
+          $('#deleteNewMarker').click(function () {
+            // Remove the marker from the map
+            map.removeLayer(layer);
+            return false; // Prevent default button click behavior
           });
         });
-      }
+        var group = new L.featureGroup(mapData.markers.map(marker => L.marker([marker.latitude, marker.longitude])));
+          map.fitBounds(group.getBounds().pad(0.2));
+      });
+    }
 
-      initializeMap();
-    </script>
-  </main>
+    createMaps(mapsWithPoints);
+    // Function to handle saving the edited map
+    function saveMap() {
+      // Retrieve edited map data and send it to the server to save
+      // Example: Implement AJAX request to save the edited map data
+      // Example AJAX request:
+      $.ajax({
+        url: '/api/edit-map/:mapId',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(editedMapData),
+        success: function(response) {
+          console.log('Map saved:', response);
+          // Implement success feedback
+        },
+        error: function(xhr, status, error) {
+          console.error('Error:', error);
+          // Implement error feedback
+        }
+      });
+
+    }
+
+    // Add event listener for the "Save Map" button
+    $(document).ready(function() {
+      $('#saveMapButton').click(function() {
+        saveMap();
+      });
+    });
+  </script>
 </body>
 </html>

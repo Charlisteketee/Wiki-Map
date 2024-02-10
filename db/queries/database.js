@@ -32,7 +32,7 @@ const getMapsData = function () {
     });
 };
 const getPointsData = function () {
-  return db.query('SELECT map_id, latitude, longitude FROM points;')
+  return db.query('SELECT * FROM points;')
     .then(data => {
       return (data.rows);
     })

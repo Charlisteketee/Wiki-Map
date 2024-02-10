@@ -78,7 +78,7 @@ app.get('/', async (req, res) => {
     const contributedNavBar = await db.getContributedNavbar(userId);
     const favouritesNavBar = await db.getFavouritesNavbar(userId);
     // Render the 'index' view and pass the maps data with associated points to it
-    res.render('index', { mapsWithPoints, contributedNavBar, favouritesNavBar});
+    res.render('index', { mapsWithPoints, contributedNavBar, favouritesNavBar, userId});
   } catch (error) {
     console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');

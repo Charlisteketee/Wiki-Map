@@ -48,35 +48,56 @@
         var map = L.map('map-' + index).setView([mapData.latitude, mapData.longitude], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {}).addTo(map);
         mapData.markers.forEach(function (marker) {
-          L.marker([marker.latitude, marker.longitude]).addTo(map);
-        });
+            L.marker([marker.latitude, marker.longitude]).addTo(map);
+            mapData.markers.forEach(function (marker) {
+              var markerInstance = L.marker([marker.latitude, marker.longitude]).addTo(map);
 
-        // Initialize drawing tools for this map
-        var drawnItems = new L.FeatureGroup();
-        map.addLayer(drawnItems);
-        var drawControl = new L.Control.Draw({
-          edit: {
-            featureGroup: drawnItems,
-          },
-        });
-        map.addControl(drawControl);
+              var popupContent = '<div id="pointInfo">' +
+              '<h3>' + marker.title + '</h3>' +
+              '<p>' + marker.body + '</p>' +
+              '<img src="' + marker.image_url + '" alt="Marker Image">' +
+              '</div>';
 
-        // Handle draw events
-        map.on(L.Draw.Event.CREATED, function (event) {
-          var layer = event.layer;
-          drawnItems.addLayer(layer);
-          // Example: Process the drawing here, e.g., save to server
-        });
+              markerInstance.bindPopup(popupContent);
+
+              markerInstance.on('click', function (e) {
+                L.DomEvent.stopPropagation(e);
+                $('#pointTitle').val(marker.title);
+                $('#pointBody').val(marker.description);
+                $('#pointImageURL').val(marker.image_url);
+              });
+            });
+          });
+
         var group = new L.featureGroup(mapData.markers.map(marker => L.marker([marker.latitude, marker.longitude])));
           map.fitBounds(group.getBounds().pad(0.2));
 
-        var likeButton = document.createElement('button');
-        likeButton.className = 'like-button';
-        likeButton.textContent = 'Like';
-        likeButton.onclick = function() {
-          console.log('Liked map ' + mapData.id); // Example action
-        };
-        mapDiv.appendChild(likeButton);
+      if (userId) {
+            // Create and append the edit button for this map
+            var editButton = document.createElement('button');
+            editButton.className = 'edit-button';
+            editButton.textContent = 'Edit';
+            containerDiv.appendChild(editButton); // Append the button to containerDiv
+
+            // event listener for edit button
+            editButton.addEventListener('click', function() {
+              // Redirect to the route for editing the map
+              window.location.href = '/api/maps/edit/' + mapData.id;
+            });
+
+            // Create and append the like button for this map
+            var likeButton = document.createElement('button');
+            likeButton.className = 'like-button';
+            likeButton.textContent = 'Like';
+            containerDiv.appendChild(likeButton); // Append the button to containerDiv
+
+            // event listener for like button
+            likeButton.addEventListener('click', function() {
+              fetch('/api/maps/like/' + mapData.id, {
+                method: 'POST'
+              });
+            });
+          }
       });
     }
 
