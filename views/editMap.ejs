@@ -20,87 +20,120 @@
       width: 800px;
       height: 600px;
     }
+    .like-button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <%- include('partials/_navbar') %>
   <main class="maps">
-    <h1>Draw and Create a New Map</h1>
+    <h1>Edit Map</h1>
     <div id="map"></div>
-    <button id="createNewMap">Create New Map</button>
+    <button id="saveMap">Save Map</button>
     <div id="coordinates"></div>
     <script>
-      var map = L.map('map').setView([0, 0], 2);
-      L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-        maxZoom: 20,
-        attribution: '&copy; ...'
-      }).addTo(map);
+      const mapData = <%- JSON.stringify(mapData) %>;
 
-      var drawnItems = new L.FeatureGroup();
-      map.addLayer(drawnItems);
+      function initializeMap() {
+        var mapsContainer = document.getElementById('maps-container');
+        var mapDiv = document.createElement('div');
+        mapDiv.className = 'map-container';
+        mapsContainer.appendChild(mapDiv);
 
-      var drawControl = new L.Control.Draw({
-        edit: {
-          featureGroup: drawnItems
-        }
-      });
-      map.addControl(drawControl);
+        var map = L.map(mapDiv).setView([mapData.latitude, mapData.longitude], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {}).addTo(map);
 
-      map.on(L.Draw.Event.CREATED, function (event) {
-        var layer = event.layer;
-        drawnItems.addLayer(layer);
+        mapData.markers.forEach(function (markerData) {
+          var marker = L.marker([markerData.latitude, markerData.longitude]).addTo(map);
+          var popupContent = '<form id="pointForm">' +
+                            '<label for="pointTitle">Title:</label>' +
+                            '<input type="text" id="pointTitle" name="pointTitle" value="' + markerData.title + '"><br>' +
+                            '<label for="pointBody">Description:</label>' +
+                            '<textarea id="pointBody" name="pointBody">' + markerData.description + '</textarea><br>' +
+                            '<label for="pointImageURL">Image URL:</label>' +
+                            '<input type="text" id="pointImageURL" name="pointImageURL" value="' + markerData.imageURL + '"><br>' +
+                            '<input type="button" value="Save" id="saveButton">' +
+                            '</form>';
+          marker.bindPopup(popupContent);
 
-        enableEditing(layer);
+          enableEditing(marker, markerData);
+        });
 
-        // Open popup for the newly added point
-        var popupContent = '<form id="pointForm">' +
-          '<label for="pointTitle">Title:</label>' +
-          '<input type="text" id="pointTitle" name="pointTitle"><br>' +
-          '<label for="pointBody">Description:</label>' +
-          '<textarea id="pointBody" name="pointBody"></textarea><br>' +
-          '<label for="pointImageURL">Image URL:</label>' +
-          '<input type="text" id="pointImageURL" name="pointImageURL"><br>' +
-          '<input type="button" value="Save" id="saveButton">' +
-          '</form>';
+        // Initialize drawing tools for this map
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
 
-        layer.bindPopup(popupContent).openPopup();
-      });
-
-      document.getElementById('createNewMap').addEventListener('click', function (e) {
-        e.preventDefault();
-        var bounds = drawnItems.getBounds();
-        var center = bounds.getCenter();
-
-        var mapData = {
-          title: "User's Map Title",
-          description: "A brief description of the map",
-          longitude: center.lng,
-          latitude: center.lat,
-          points: drawnItems.toGeoJSON().features.map(feature => ({
-            longitude: feature.geometry.coordinates[0],
-            latitude: feature.geometry.coordinates[1],
-            title: "Dynamic Point Title",
-            body: "Dynamic Description",
-            image_url: "Dynamic URL"
-          }))
-        };
-
-        console.log(mapData);
-        $.ajax({
-          url: '/api/create-map/save-map',
-          type: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify(mapData),
-          success: function(response) {
-            console.log('Map saved:', response);
-            // Implement success feedback
-          },
-          error: function(xhr, status, error) {
-            console.error('Error:', error);
-            // Implement error feedback
+        var drawControl = new L.Control.Draw({
+          edit: {
+            featureGroup: drawnItems
           }
         });
-      });
+        map.addControl(drawControl);
+
+        // Handle draw events
+        map.on(L.Draw.Event.CREATED, function (event) {
+          var layer = event.layer;
+          drawnItems.addLayer(layer);
+        });
+
+        var group = new L.featureGroup(mapData.markers.map(marker => L.marker([marker.latitude, marker.longitude])));
+        map.fitBounds(group.getBounds().pad(0.2));
+
+        var likeButton = document.createElement('button');
+        likeButton.className = 'like-button';
+        likeButton.textContent = 'Like';
+        likeButton.onclick = function() {
+          console.log('Liked map ' + mapData.id);
+        };
+        mapDiv.appendChild(likeButton);
+      }
+
+
+      // Unsure if this section is still needed
+
+      //document.getElementById('createNewMap').addEventListener('click', function (e) {
+      //  e.preventDefault();
+      //  var bounds = drawnItems.getBounds();
+      //  var center = bounds.getCenter();
+//
+      //  var mapData = {
+      //    title: "User's Map Title",
+      //    description: "A brief description of the map",
+      //    longitude: center.lng,
+      //    latitude: center.lat,
+      //    points: drawnItems.toGeoJSON().features.map(feature => ({
+      //      longitude: feature.geometry.coordinates[0],
+      //      latitude: feature.geometry.coordinates[1],
+      //      title: "Dynamic Point Title",
+      //      body: "Dynamic Description",
+      //      image_url: "Dynamic URL"
+      //    }))
+      //  };
+
+      //  console.log(mapData);
+      //  $.ajax({
+      //    url: '/api/edit-map/:mapId',
+      //    type: 'POST',
+      //    contentType: 'application/json',
+      //    data: JSON.stringify(mapData),
+      //    success: function(response) {
+      //      console.log('Map saved:', response);
+      //      // Implement success feedback
+      //    },
+      //    error: function(xhr, status, error) {
+      //      console.error('Error:', error);
+      //      // Implement error feedback
+      //    }
+      //  });
+      //});
 
       // Function to reopen popup and display previous data when marker is clicked
       function reopenPopupAndDisplayData(layer) {
@@ -113,22 +146,29 @@
         layer.openPopup();
       }
 
-      function enableEditing(layer) {
-        layer.on('click', function () {
-          if (!map.hasLayer(layer)) {
-            map.addLayer(layer);
+      function enableEditing(marker, markerData) {
+        marker.on('click', function () {
+          if (!map.hasLayer(marker)) {
+            map.addLayer(marker);
           }
+          reopenPopupAndDisplayData(marker, markerData); // Call the function when marker is clicked
         });
-        drawnItems.on('click', function () {
-          map.addLayer(layer);
-        });
-        layer.on('edit', function (event) {
-          var editedLayer = event.target;
-          var latlng = editedLayer.getLatLng();
-          console.log('Marker edited:', latlng);
-          // Handle marker edit (e.g., update coordinates in the database)
+
+        marker.on('popupopen', function () {
+          document.getElementById('pointForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = {
+              title: document.getElementById('pointTitle').value,
+              description: document.getElementById('pointBody').value,
+              imageURL: document.getElementById('pointImageURL').value
+            };
+            console.log('Form data:', formData);
+            // Insert logic here to update marker data
+          });
         });
       }
+
+      initializeMap();
     </script>
   </main>
 </body>
