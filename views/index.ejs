@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="stylesheet" href="/styles/layout.css" />
+  <link rel="stylesheet" href="/styles/navbar.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <style>
@@ -14,20 +16,18 @@
           margin: auto; /* Center the map */
         }
 
-        .like-button {
-          display: block;
-          margin: 10px auto; /* Center the button below the map */
+        .like-button, .edit-button {
+          justify-content: center;
           padding: 10px 20px;
-          background-color: #4CAF50; /* Example button color */
-          color: white;
-          border: none;
-          border-radius: 5px;
+          background-color: lightgray; /* Example button color */
+          color: darkslategrey;
+          border-color: darkslategrey;
+          border-radius: 3px;
           cursor: pointer;
         }
     </style>
 </head>
 <header>
-  <h1>Wiki Maps</h1>
   <%- include('partials/_navbar') %>
 </header>
 <body>
