@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Home Page</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/vendor/normalize-4.1.1.css" />
+  <link rel="stylesheet" href="/vendor/border-box.css" />
+  <link rel="stylesheet" href="/styles/layout.css" />
+  <link rel="stylesheet" href="/styles/navbar.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+  <link rel="stylesheet" href="/styles/maps.css">
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+  <script src="/vendor/jquery-3.0.0.js"></script>
+  <style>
+    #map {
+      width: 800px;
+      height: 600px;
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/_navbar') %>
+  <main class="maps">
+    <h1>Draw and Create a New Map</h1>
+    <div id="map"></div>
+    <button id="createNewMap">Create New Map</button>
+    <div id="coordinates"></div>
+    <script>
+      var map = L.map('map').setView([0, 0], 2);
+      L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        attribution: '&copy; ...'
+      }).addTo(map);
+
+      var drawnItems = new L.FeatureGroup();
+      map.addLayer(drawnItems);
+
+      var drawControl = new L.Control.Draw({
+        edit: {
+          featureGroup: drawnItems
+        }
+      });
+      map.addControl(drawControl);
+
+      map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
+        drawnItems.addLayer(layer);
+
+        enableEditing(layer);
+
+        // Open popup for the newly added point
+        var popupContent = '<form id="pointForm">' +
+          '<label for="pointTitle">Title:</label>' +
+          '<input type="text" id="pointTitle" name="pointTitle"><br>' +
+          '<label for="pointBody">Description:</label>' +
+          '<textarea id="pointBody" name="pointBody"></textarea><br>' +
+          '<label for="pointImageURL">Image URL:</label>' +
+          '<input type="text" id="pointImageURL" name="pointImageURL"><br>' +
+          '<input type="button" value="Save" id="saveButton">' +
+          '</form>';
+
+        layer.bindPopup(popupContent).openPopup();
+      });
+
+      document.getElementById('createNewMap').addEventListener('click', function (e) {
+        e.preventDefault();
+        var bounds = drawnItems.getBounds();
+        var center = bounds.getCenter();
+
+        var mapData = {
+          title: "User's Map Title",
+          description: "A brief description of the map",
+          longitude: center.lng,
+          latitude: center.lat,
+          points: drawnItems.toGeoJSON().features.map(feature => ({
+            longitude: feature.geometry.coordinates[0],
+            latitude: feature.geometry.coordinates[1],
+            title: "Dynamic Point Title",
+            body: "Dynamic Description",
+            image_url: "Dynamic URL"
+          }))
+        };
+
+        console.log(mapData);
+        $.ajax({
+          url: '/api/create-map/save-map',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(mapData),
+          success: function(response) {
+            console.log('Map saved:', response);
+            // Implement success feedback
+          },
+          error: function(xhr, status, error) {
+            console.error('Error:', error);
+            // Implement error feedback
+          }
+        });
+      });
+
+      // Function to reopen popup and display previous data when marker is clicked
+      function reopenPopupAndDisplayData(layer) {
+        var prevData = layer.options.prevData;
+        if (prevData) {
+          $('#pointTitle').val(prevData.title);
+          $('#pointBody').val(prevData.body);
+          $('#pointImageURL').val(prevData.image_url);
+        }
+        layer.openPopup();
+      }
+
+      function enableEditing(layer) {
+        layer.on('click', function () {
+          if (!map.hasLayer(layer)) {
+            map.addLayer(layer);
+          }
+        });
+        drawnItems.on('click', function () {
+          map.addLayer(layer);
+        });
+        layer.on('edit', function (event) {
+          var editedLayer = event.target;
+          var latlng = editedLayer.getLatLng();
+          console.log('Marker edited:', latlng);
+          // Handle marker edit (e.g., update coordinates in the database)
+        });
+      }
+    </script>
+  </main>
+</body>
+</html>
