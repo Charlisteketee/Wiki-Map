@@ -26,6 +26,12 @@
   <%- include('partials/_navbar') %>
   <main class="maps">
     <h1>Draw and Create a New Map</h1>
+    <div>
+      <label for="mapTitle">Title:</label>
+      <input type="text" id="mapTitle" name="mapTitle"><br>
+      <label for="mapDescription">Description:</label>
+      <textarea id="mapDescription" name="mapDescription"></textarea><br>
+    </div>
     <div id="map"></div>
     <button id="createNewMap">Create New Map</button>
     <div id="coordinates"></div>
@@ -111,8 +117,8 @@
         var center = bounds.getCenter();
 
         var mapData = {
-          title: "User's Map Title",
-          description: "A brief description of the map",
+          title: $('#mapTitle').val(), // Retrieve title from input field
+          description: $('#mapDescription').val(), // Retrieve description from input field
           longitude: center.lng,
           latitude: center.lat,
           points: drawnItems.toGeoJSON().features.map(feature => ({
